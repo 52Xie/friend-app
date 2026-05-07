@@ -253,6 +253,8 @@ function initPeer(){
     document.getElementById('connStatus').textContent='🟢 已连接';
     // 通知好友我上线了
     broadcastOnline();
+    // 尝试发送离线消息
+    setTimeout(()=>deliverAllPending(),2000);
   });
 
   myPeer.on('connection',conn=>{
@@ -285,8 +287,9 @@ function handleDataConnection(conn){
     if(data.type==='online'){
       onlinePeers.add(data.userId);
       updateFriendStatus();
+      // 对方上线了，发送离线消息
+      deliverPendingMessages(data.userId);
     }else if(data.type==='message'){
-      // 语音消息数据可能较大，需要分片处理
       receiveMessage(data);
     }else if(data.type==='call-offer'){
       document.getElementById('callerName').textContent=data.callerName||'未知';
@@ -295,8 +298,13 @@ function handleDataConnection(conn){
     }else if(data.type==='call-reject'){
       alert('对方拒绝了通话');
     }else if(data.type==='db-sync'){
-      // 同步数据库
       mergeDB(data.db);
+    }else if(data.type==='messages-batch'){
+      // 批量接收离线消息
+      (data.messages||[]).forEach(m=>receiveMessage({msg:m},true));
+    }else if(data.type==='msg-ack'){
+      // 消息送达确认
+      markMsgDelivered(data.msgId);
     }
   });
 
@@ -310,7 +318,7 @@ function handleDataConnection(conn){
 
   // 如果当前在聊天页面，更新状态
   if(curFriend&&curFriend.id===remoteUserId){
-    document.getElementById('chatStatus').textContent='在线';
+    document.getElementById('chatStatus').textContent='🟢 在线';
     document.getElementById('chatStatus').className='online';
   }
 }
@@ -326,6 +334,53 @@ function broadcastOnline(){
   });
 }
 
+// ===== 离线消息队列 =====
+const PENDING_KEY='friendAppPending';
+
+function getPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY))||{}}catch{return{}}}
+function savePending(p){localStorage.setItem(PENDING_KEY,JSON.stringify(p))}
+
+// 将消息加入待发送队列
+function queueMessage(msg){
+  const p=getPending();
+  const key=String(msg.receiver_id);
+  if(!p[key])p[key]=[];
+  p[key].push(msg);
+  savePending(p);
+}
+
+// 对方上线时，发送所有离线消息
+function deliverPendingMessages(friendId){
+  const p=getPending();
+  const key=String(friendId);
+  const msgs=p[key]||[];
+  if(!msgs.length)return;
+  
+  const conn=connections[friendId];
+  if(!conn||!conn.open)return;
+  
+  // 批量发送
+  conn.send({type:'messages-batch',messages:msgs});
+  
+  // 发送确认
+  msgs.forEach(m=>{
+    setTimeout(()=>{
+      if(conn.open)conn.send({type:'msg-ack',msgId:m.id});
+    },200);
+  });
+  
+  // 从队列中移除
+  delete p[key];
+  savePending(p);
+}
+
+// 标记消息已送达
+function markMsgDelivered(msgId){
+  const db=loadDB();
+  const m=db.messages.find(x=>x.id===msgId);
+  if(m){m.delivered=true;saveDB(db)}
+}
+
 // 连接到某个好友
 function connectToPeer(friendId){
   if(connections[friendId])return;
@@ -337,9 +392,22 @@ function connectToPeer(friendId){
       onlinePeers.add(friendId);
       conn.send({type:'online',userId:user.id,nickname:user.nickname});
       updateFriendStatus();
+      // 对方在线，发送离线消息
+      deliverPendingMessages(friendId);
     });
     handleDataConnection(conn);
   }catch(e){console.log('连接失败:',e)}
+}
+
+// 发送所有待发送的离线消息
+function deliverAllPending(){
+  const p=getPending();
+  Object.keys(p).forEach(fid=>{
+    const id=parseInt(fid);
+    if(onlinePeers.has(id)){
+      deliverPendingMessages(id);
+    }
+  });
 }
 
 // 更新好友在线状态
@@ -519,9 +587,11 @@ function msgHTML(m){
     const ss=sec%60;
     const durStr=mm>0?mm+':'+String(ss).padStart(2,'0'):ss+'"';
     const bars=Array.from({length:Math.max(8,Math.min(20,sec*2))},(_,i)=>`<span style="animation-delay:${i*0.1}s;height:${4+Math.random()*14}px"></span>`).join('');
-    return `<div class="msg ${isMe?'msg-me':'msg-them'}" onclick="playVoice('${m.id}')" style="cursor:pointer"><div class="voice-msg ${isMe?'voice-msg-me':'voice-msg-them'}"><button class="play-btn" id="play-${m.id}">▶</button><div class="voice-wave">${bars}</div><span class="voice-dur">${durStr}</span></div><div class="msg-time">${t}</div></div>`;
+    const deliveredIcon=isMe?(m.delivered?'✓✓':'✓'):'';
+    return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}" onclick="playVoice('${m.id}')" style="cursor:pointer"><div class="voice-msg ${isMe?'voice-msg-me':'voice-msg-them'}"><button class="play-btn" id="play-${m.id}">▶</button><div class="voice-wave">${bars}</div><span class="voice-dur">${durStr}</span></div><div class="msg-time">${t} ${deliveredIcon}</div></div>`;
   }
-  return `<div class="msg ${isMe?'msg-me':'msg-them'}">${m.content}<div class="msg-time">${t}</div></div>`;
+  const deliveredIcon=isMe?(m.delivered?'✓✓':'✓'):'';
+  return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}">${m.content}<div class="msg-time">${t} ${deliveredIcon}</div></div>`;
 }
 
 // ===== 语音录制 =====
@@ -580,7 +650,7 @@ async function sendVoiceMsg(){
     const reader=new FileReader();
     reader.onload=()=>{
       const base64=reader.result;
-      const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:'🎤 语音消息',type:'voice',voiceData:base64,duration:duration,created_at:new Date().toISOString(),read:false};
+      const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:'🎤 语音消息',type:'voice',voiceData:base64,duration:duration,created_at:new Date().toISOString(),read:false,delivered:false};
       
       // 保存到本地
       const db=loadDB();
@@ -588,7 +658,13 @@ async function sendVoiceMsg(){
       
       // 通过 PeerJS 发送
       const conn=connections[curFriend.id];
-      if(conn&&conn.open){conn.send({type:'message',msg:msg})}
+      if(conn&&conn.open){
+        conn.send({type:'message',msg:msg});
+        msg.delivered=true;saveDB(db);
+      }else{
+        // 对方离线，加入待发送队列
+        queueMessage(msg);
+      }
       
       // 显示
       document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
@@ -624,17 +700,20 @@ function sendMsg(){
   const txt=inp.value.trim();
   if(!txt||!curFriend)return;
   
-  const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:txt,created_at:new Date().toISOString(),read:false};
+  const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:txt,created_at:new Date().toISOString(),read:false,delivered:false};
   
   // 保存到本地
   const db=loadDB();
-  db.messages.push(msg);
-  saveDB(db);
+  db.messages.push(msg);saveDB(db);
   
   // 通过 PeerJS 发送
   const conn=connections[curFriend.id];
   if(conn&&conn.open){
     conn.send({type:'message',msg:msg});
+    msg.delivered=true;saveDB(db);
+  }else{
+    // 对方离线，加入待发送队列
+    queueMessage(msg);
   }
   
   // 显示消息
@@ -643,7 +722,7 @@ function sendMsg(){
 }
 
 // 接收消息
-function receiveMessage(data){
+function receiveMessage(data,isBatch){
   const msg=data.msg;
   if(!msg)return;
   
@@ -653,13 +732,20 @@ function receiveMessage(data){
     db.messages.push(msg);saveDB(db);
   }
   
+  // 发送送达确认
+  if(!isBatch){
+    const conn=connections[msg.sender_id];
+    if(conn&&conn.open)conn.send({type:'msg-ack',msgId:msg.id});
+  }
+  
   // 如果正在和发送者聊天，直接显示
   if(curFriend&&curFriend.id===msg.sender_id){
-    document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
-    // 标记已读
+    // 检查是否已显示（避免重复）
+    if(!document.getElementById('msg-'+msg.id)){
+      document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
+    }
     msg.read=true;saveDB(db);
   }else{
-    // 否则刷新好友列表显示未读
     renderFriends();
   }
 }
