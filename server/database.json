@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "username": "alice",
+      "password_hash": "$2a$10$qnGcwD/4jz1EIfE4rJ5cOueeel6K3NFrVl.xIWzXztUcKINOmPwI2",
+      "nickname": "爱丽丝",
+      "avatar": "",
+      "id": 1
+    },
+    {
+      "username": "bob",
+      "password_hash": "$2a$10$h/wKnDxDG4Q58Kp19qk0nueh2iFcQo/nR9g/6GsdeMTJZ6VO5Y0P6",
+      "nickname": "鲍勃",
+      "avatar": "",
+      "id": 2
+    }
+  ],
+  "friendships": [],
+  "messages": [],
+  "videos": [],
+  "sessions": []
+}

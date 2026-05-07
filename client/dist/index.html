@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="description" content="好友实时互动应用 - 视频通话、实时聊天" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" href="./icon-192.png" />
+    <title>Friend App</title>
+    <script>
+      // 注册 Service Worker（PWA 离线支持）
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('SW registration failed:', err);
+          });
+        });
+      }
+      // 监听 beforeinstallprompt（PWA 安装提示）
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.__deferredPrompt = e;
+      });
+    </script>
+    <script type="module" crossorigin src="./assets/index-Bs5k6T9C.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DmX_LqhR.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
