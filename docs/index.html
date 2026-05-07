@@ -64,6 +64,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 .chat-header .title h3{font-size:16px;color:#1e293b;font-weight:500}
 .chat-header .title p{font-size:11px;color:#999}
 .chat-header .more-btn{background:none;border:none;font-size:22px;color:#1e293b;cursor:pointer;padding:4px 8px}
+.call-btn{border:none;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;color:#fff;margin-left:4px;display:flex;align-items:center;justify-content:center}
+.call-btn-voice{background:#07c160}
+.call-btn-voice:active{background:#06ad56}
+.call-btn-video{background:#576b95}
+.call-btn-video:active{background:#4a5d85}
 .messages{flex:1;padding:12px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#ededed}
 
 /* 消息气泡+头像 */
@@ -299,6 +304,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <button class="back" onclick="closeChat()">‹</button>
 <div class="title"><h3 id="chatName"></h3><p id="chatStatus"></p></div>
 <button class="more-btn" onclick="toggleChatMenu()">⋯</button>
+<button class="call-btn call-btn-voice" id="chatVoiceCallBtn" onclick="startVoiceCall()">📞</button>
+<button class="call-btn call-btn-video" id="chatVideoCallBtn" onclick="startCall()">📹</button>
 </div>
 <div class="typing-indicator" id="typingIndicator"></div>
 <div class="messages" id="msgList"></div>
@@ -530,10 +537,14 @@ function openChat(ck){
   if(ck.startsWith('friend-')){
     curChatType='friend';const fid=parseInt(ck.replace('friend-',''));curChat=db.users.find(u=>u.id===fid);if(!curChat)return;
     document.getElementById('chatName').textContent=getDisplayName(curChat);document.getElementById('chatStatus').textContent=onlinePeers.has(fid)?'🟢 在线':'⚫ 离线';
+    document.getElementById('chatVoiceCallBtn').style.display='flex';
+    document.getElementById('chatVideoCallBtn').style.display='flex';
     db.messages.filter(m=>m.sender_id===fid&&m.receiver_id===user.id&&!m.read).forEach(m=>m.read=true);saveDB(db);sendReadReceipt(fid);
   }else{
     curChatType='group';const gid=parseInt(ck.replace('group-',''));curChat=db.groups.find(g=>g.id===gid);if(!curChat)return;
     document.getElementById('chatName').textContent=curChat.name;document.getElementById('chatStatus').textContent=curChat.members.length+'人';
+    document.getElementById('chatVoiceCallBtn').style.display='none';
+    document.getElementById('chatVideoCallBtn').style.display='none';
     db.messages.filter(m=>m.group_id===gid&&!m.read&&m.sender_id!==user.id).forEach(m=>m.read=true);saveDB(db);
   }
   show('chatScreen');loadMessages();
