@@ -87,6 +87,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 .conn-status{font-size:12px;padding:4px 12px;border-radius:12px;display:inline-block;margin:8px 20px}
 .conn-ok{background:#dcfce7;color:#166534}
 .conn-no{background:#fef2f2;color:#991b1b}
+
+/* 语音消息 */
+.voice-msg{display:flex;align-items:center;gap:10px;min-width:140px;cursor:pointer}
+.voice-msg .play-btn{width:36px;height:36px;border-radius:50%;border:none;font-size:16px;cursor:pointer;flex-shrink:0}
+.voice-msg-me .play-btn{background:rgba(255,255,255,.3);color:#fff}
+.voice-msg-them .play-btn{background:#e2e8f0;color:#3b82f6}
+.voice-wave{flex:1;height:24px;display:flex;align-items:center;gap:2px}
+.voice-wave span{width:3px;border-radius:2px;animation:wave 1s ease-in-out infinite}
+.voice-msg-me .voice-wave span{background:rgba(255,255,255,.7)}
+.voice-msg-them .voice-wave span{background:#94a3b8}
+.voice-dur{font-size:12px;opacity:.8;flex-shrink:0}
+@keyframes wave{0%,100%{height:4px}50%{height:18px}}
+
+/* 录音状态 */
+.recording{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;padding:24px;display:none;align-items:center;justify-content:center;gap:16px;z-index:50;padding-bottom:max(24px, env(safe-area-inset-bottom))}
+.recording.active{display:flex}
+.rec-dot{width:12px;height:12px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rec-time{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.rec-cancel{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;cursor:pointer}
+.rec-send{background:#10b981;border:none;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -138,8 +159,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 </div>
 <div class="messages" id="msgList"></div>
 <div class="chat-input">
+<button onclick="toggleRecording()" id="micBtn" style="background:#f0f2f5;color:#64748b;border:none;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer;flex-shrink:0">🎤</button>
 <input type="text" id="msgInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMsg()">
 <button onclick="sendMsg()">↑</button>
+</div>
+
+<!-- 录音状态栏 -->
+<div class="recording" id="recordingBar">
+<div class="rec-dot"></div>
+<span class="rec-time" id="recTime">0:00</span>
+<button class="rec-cancel" onclick="cancelRecording()">取消</button>
+<button class="rec-send" onclick="sendVoiceMsg()">发送</button>
 </div>
 </div>
 
@@ -256,6 +286,7 @@ function handleDataConnection(conn){
       onlinePeers.add(data.userId);
       updateFriendStatus();
     }else if(data.type==='message'){
+      // 语音消息数据可能较大，需要分片处理
       receiveMessage(data);
     }else if(data.type==='call-offer'){
       document.getElementById('callerName').textContent=data.callerName||'未知';
@@ -481,7 +512,109 @@ function loadMessages(fid){
 function msgHTML(m){
   const isMe=m.sender_id===user.id;
   const t=new Date(m.created_at).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  if(m.type==='voice'&&m.voiceData){
+    const dur=m.duration||0;
+    const sec=Math.floor(dur/1000);
+    const mm=Math.floor(sec/60);
+    const ss=sec%60;
+    const durStr=mm>0?mm+':'+String(ss).padStart(2,'0'):ss+'"';
+    const bars=Array.from({length:Math.max(8,Math.min(20,sec*2))},(_,i)=>`<span style="animation-delay:${i*0.1}s;height:${4+Math.random()*14}px"></span>`).join('');
+    return `<div class="msg ${isMe?'msg-me':'msg-them'}" onclick="playVoice('${m.id}')" style="cursor:pointer"><div class="voice-msg ${isMe?'voice-msg-me':'voice-msg-them'}"><button class="play-btn" id="play-${m.id}">▶</button><div class="voice-wave">${bars}</div><span class="voice-dur">${durStr}</span></div><div class="msg-time">${t}</div></div>`;
+  }
   return `<div class="msg ${isMe?'msg-me':'msg-them'}">${m.content}<div class="msg-time">${t}</div></div>`;
+}
+
+// ===== 语音录制 =====
+let mediaRecorder=null;
+let audioChunks=[];
+let recordingStartTime=0;
+let recordingTimer=null;
+let isRecording=false;
+
+function toggleRecording(){
+  if(isRecording){sendVoiceMsg();return}
+  startRecording();
+}
+
+async function startRecording(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder=new MediaRecorder(stream);
+    audioChunks=[];
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data)};
+    mediaRecorder.start();
+    recordingStartTime=Date.now();
+    isRecording=true;
+    document.getElementById('micBtn').style.background='#ef4444';
+    document.getElementById('micBtn').style.color='#fff';
+    document.getElementById('recordingBar').classList.add('active');
+    // 计时器
+    recordingTimer=setInterval(()=>{
+      const elapsed=Date.now()-recordingStartTime;
+      const s=Math.floor(elapsed/1000);
+      const mm=Math.floor(s/60);
+      const ss=s%60;
+      document.getElementById('recTime').textContent=mm+':'+String(ss).padStart(2,'0');
+    },1000);
+  }catch(e){alert('请允许访问麦克风')}
+}
+
+function cancelRecording(){
+  if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop()}
+  isRecording=false;
+  document.getElementById('micBtn').style.background='#f0f2f5';
+  document.getElementById('micBtn').style.color='#64748b';
+  document.getElementById('recordingBar').classList.remove('active');
+  clearInterval(recordingTimer);
+}
+
+async function sendVoiceMsg(){
+  if(!isRecording||!curFriend)return;
+  // 停止录音
+  const duration=Date.now()-recordingStartTime;
+  if(duration<500){cancelRecording();return} // 太短忽略
+  
+  mediaRecorder.onstop=async()=>{
+    const blob=new Blob(audioChunks,{type:'audio/webm'});
+    // 转成 base64
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const base64=reader.result;
+      const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:'🎤 语音消息',type:'voice',voiceData:base64,duration:duration,created_at:new Date().toISOString(),read:false};
+      
+      // 保存到本地
+      const db=loadDB();
+      db.messages.push(msg);saveDB(db);
+      
+      // 通过 PeerJS 发送
+      const conn=connections[curFriend.id];
+      if(conn&&conn.open){conn.send({type:'message',msg:msg})}
+      
+      // 显示
+      document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
+    };
+    reader.readAsDataURL(blob);
+    mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+  };
+  mediaRecorder.stop();
+  isRecording=false;
+  document.getElementById('micBtn').style.background='#f0f2f5';
+  document.getElementById('micBtn').style.color='#64748b';
+  document.getElementById('recordingBar').classList.remove('active');
+  clearInterval(recordingTimer);
+}
+
+// 播放语音
+function playVoice(msgId){
+  const db=loadDB();
+  const msg=db.messages.find(m=>m.id===msgId);
+  if(!msg||!msg.voiceData)return;
+  const audio=new Audio(msg.voiceData);
+  const btn=document.getElementById('play-'+msgId);
+  if(btn)btn.textContent='⏸';
+  audio.play();
+  audio.onended=()=>{if(btn)btn.textContent='▶'};
+  audio.onerror=()=>{if(btn)btn.textContent='▶';alert('播放失败')};
 }
 
 function scrollMsgs(){const el=document.getElementById('msgList');el.scrollTop=el.scrollHeight}
