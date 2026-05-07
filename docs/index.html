@@ -6,139 +6,215 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Friend App">
-<link rel="manifest" href="manifest.json">
 <title>Friend App</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:#f0f2f5;overflow:hidden;height:100vh;height:100dvh}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:#ededed;overflow:hidden;height:100vh;height:100dvh;-webkit-user-select:none;user-select:none}
 .screen{display:none;height:100vh;height:100dvh;width:100%}
 .screen.active{display:flex}
-.auth-screen{align-items:center;justify-content:center;padding:20px}
-.auth-box{background:#fff;border-radius:24px;padding:40px 28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-.auth-box h1{text-align:center;font-size:32px;margin-bottom:4px;color:#1e293b}
-.auth-box .sub{text-align:center;color:#94a3b8;margin-bottom:28px;font-size:15px}
-.auth-box input{width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:14px;font-size:16px;margin-bottom:12px;outline:none;background:#f8fafc}
-.auth-box input:focus{border-color:#3b82f6;background:#fff}
-.btn{width:100%;padding:14px;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.auth-screen{align-items:center;justify-content:center;padding:20px;background:#ededed}
+.auth-box{background:#fff;border-radius:16px;padding:36px 24px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.auth-box h1{text-align:center;font-size:28px;margin-bottom:4px;color:#1e293b}
+.auth-box .sub{text-align:center;color:#999;margin-bottom:24px;font-size:14px}
+.auth-box input{width:100%;padding:12px 14px;border:none;border-bottom:1px solid #e5e5e5;font-size:16px;margin-bottom:14px;outline:none;background:transparent;border-radius:0}
+.auth-box input:focus{border-bottom-color:#07c160}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.btn-green{background:#07c160;color:#fff}
+.btn-green:active{background:#06ad56}
 .btn-blue{background:#3b82f6;color:#fff}
-.btn-blue:active{background:#2563eb}
-.btn-green{background:#10b981;color:#fff}
-.btn-green:active{background:#059669}
 .btn-red{background:#ef4444;color:#fff}
-.btn-red:active{background:#dc2626}
-.link{text-align:center;margin-top:16px;color:#64748b;font-size:14px}
-.link a{color:#3b82f6;text-decoration:none;font-weight:600}
-.error{background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
-.success{background:#dcfce7;color:#166534;padding:10px 14px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
-.app-screen{flex-direction:column;height:100vh;height:100dvh}
-.app-header{background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.app-header h2{font-size:18px;font-weight:700}
-.app-header button{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;cursor:pointer}
-.tab-bar{display:flex;background:#fff;border-bottom:1px solid #e2e8f0;flex-shrink:0}
-.tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:500;color:#64748b;cursor:pointer;border-bottom:3px solid transparent}
-.tab.active{color:#3b82f6;border-bottom-color:#3b82f6}
-.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.friend-item{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid #f1f5f9;cursor:pointer}
-.friend-item:active{background:#f1f5f9}
-.avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;margin-right:14px;flex-shrink:0}
-.av1{background:linear-gradient(135deg,#3b82f6,#8b5cf6)}
-.av2{background:linear-gradient(135deg,#10b981,#06b6d4)}
-.av3{background:linear-gradient(135deg,#f59e0b,#ef4444)}
-.av4{background:linear-gradient(135deg,#ec4899,#8b5cf6)}
-.av5{background:linear-gradient(135deg,#14b8a6,#3b82f6)}
-.friend-name{font-weight:600;color:#1e293b;font-size:16px}
-.friend-status{font-size:12px;margin-top:2px}
-.online{color:#10b981}.offline{color:#94a3b8}
-.chat-header{background:#fff;padding:14px 20px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;flex-shrink:0}
-.chat-header .back{background:none;border:none;font-size:24px;cursor:pointer;color:#3b82f6;margin-right:8px}
+.link{text-align:center;margin-top:14px;color:#999;font-size:14px}
+.link a{color:#07c160;text-decoration:none;font-weight:600}
+.error{background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:12px;display:none}
+.success{background:#dcfce7;color:#166534;padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:12px;display:none}
+
+/* 微信风格主页 */
+.app-screen{flex-direction:column;height:100vh;height:100dvh;background:#ededed}
+.app-header{background:#ededed;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.app-header h2{font-size:17px;font-weight:600;color:#1e293b}
+.app-header button{background:none;border:none;color:#07c160;padding:6px 12px;border-radius:6px;font-size:14px;cursor:pointer}
+.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.conn-on{background:#07c160}.conn-off{background:#f59e0b}
+.tab-bar{display:flex;background:#f7f7f7;border-top:1px solid #d9d9d9;border-bottom:1px solid #d9d9d9;flex-shrink:0}
+.tab{flex:1;padding:8px 4px;text-align:center;font-size:11px;color:#999;cursor:pointer;position:relative}
+.tab .tab-icon{font-size:22px;display:block;margin-bottom:2px}
+.tab.active{color:#07c160}
+.tab .tab-badge{position:absolute;top:2px;right:calc(50% - 18px);background:#f44336;color:#fff;font-size:10px;border-radius:8px;padding:0 5px;min-width:16px;height:16px;line-height:16px}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#ededed}
+.friend-item{display:flex;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.friend-item:active{background:#ececec}
+.friend-item.pinned{background:#f5f5f5}
+.avatar{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;margin-right:12px;flex-shrink:0}
+.av1{background:linear-gradient(135deg,#07c160,#06ad56)}
+.av2{background:linear-gradient(135deg,#576b95,#3b5998)}
+.av3{background:linear-gradient(135deg,#f09b37,#e67e22)}
+.av4{background:linear-gradient(135deg,#e8555d,#c0392b)}
+.av5{background:linear-gradient(135deg,#6b7280,#4b5563)}
+.av-group{background:linear-gradient(135deg,#576b95,#8b5cf6)}
+.friend-name{font-weight:500;color:#1e293b;font-size:15px}
+.friend-remark{font-size:13px;color:#999;margin-top:1px}
+.friend-status{font-size:12px;margin-top:1px}
+.online{color:#07c160}.offline{color:#bbb}
+.last-msg{font-size:13px;color:#999;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.msg-time-small{font-size:11px;color:#b0b0b0;position:absolute;top:12px;right:16px}
+.badge{background:#f44336;color:#fff;font-size:10px;border-radius:10px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+
+/* 聊天页 */
+.chat-header{background:#ededed;padding:12px 16px;border-bottom:1px solid #d9d9d9;display:flex;align-items:center;flex-shrink:0}
+.chat-header .back{background:none;border:none;font-size:22px;cursor:pointer;color:#1e293b;margin-right:8px;padding:0 4px}
 .chat-header .title{flex:1}
-.chat-header .title h3{font-size:16px;color:#1e293b}
-.chat-header .title p{font-size:12px}
-.chat-header .call-btns{display:flex;gap:6px}
-.call-btn{border:none;padding:8px 12px;border-radius:20px;font-size:13px;cursor:pointer;color:#fff}
-.call-btn-voice{background:#10b981}
-.call-btn-video{background:#3b82f6}
-.messages{flex:1;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#f8fafc}
-.msg{max-width:75%;padding:10px 16px;border-radius:18px;margin-bottom:8px;font-size:15px;line-height:1.5;word-wrap:break-word}
-.msg-me{background:#3b82f6;color:#fff;margin-left:auto;border-bottom-right-radius:4px}
-.msg-them{background:#fff;color:#1e293b;margin-right:auto;border-bottom-left-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.msg-time{font-size:11px;opacity:.7;margin-top:4px}
-.chat-input{padding:10px 16px;background:#fff;border-top:1px solid #e2e8f0;display:flex;gap:6px;flex-shrink:0;align-items:center;padding-bottom:max(10px, env(safe-area-inset-bottom))}
-.chat-input input{flex:1;padding:10px 16px;border:2px solid #e2e8f0;border-radius:24px;outline:none;font-size:15px}
-.chat-input button{border:none;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.send-btn{background:#3b82f6;color:#fff}
-.search-bar{padding:12px 16px;background:#fff;border-bottom:1px solid #e2e8f0}
-.search-bar input{width:100%;padding:10px 16px;border:2px solid #e2e8f0;border-radius:12px;outline:none;font-size:14px}
-.search-result{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid #f1f5f9}
-.search-result .info{flex:1}
-.search-result .info .name{font-weight:600;color:#1e293b}
-.add-btn{background:#3b82f6;color:#fff;border:none;padding:6px 16px;border-radius:16px;font-size:13px;cursor:pointer}
-.empty{text-align:center;padding:60px 20px;color:#94a3b8}
-.empty .icon{font-size:48px;margin-bottom:12px}
+.chat-header .title h3{font-size:16px;color:#1e293b;font-weight:500}
+.chat-header .title p{font-size:11px;color:#999}
+.chat-header .more-btn{background:none;border:none;font-size:22px;color:#1e293b;cursor:pointer;padding:4px 8px}
+.messages{flex:1;padding:12px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#ededed}
+.msg{max-width:70%;padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:15px;line-height:1.5;word-wrap:break-word;position:relative}
+.msg-me{background:#95ec69;color:#1e293b;margin-left:auto;border-top-right-radius:2px}
+.msg-them{background:#fff;color:#1e293b;margin-right:auto;border-top-left-radius:2px}
+.msg-time{font-size:10px;color:#999;margin-top:4px}
+.msg-me .msg-time{text-align:right}
+.msg-recalled{font-style:italic;color:#999;font-size:13px}
+.msg-quote{background:rgba(0,0,0,.06);border-left:3px solid rgba(0,0,0,.15);padding:4px 8px;border-radius:3px;margin-bottom:6px;font-size:13px;color:#666;cursor:pointer}
+.msg-me .msg-quote{background:rgba(0,0,0,.06);border-left-color:rgba(0,0,0,.15)}
+
+/* 聊天输入栏 */
+.chat-input{padding:8px 12px;background:#f7f7f7;border-top:1px solid #d9d9d9;display:flex;gap:4px;flex-shrink:0;align-items:flex-end;padding-bottom:max(8px, env(safe-area-inset-bottom))}
+.chat-input .tool-btn{background:none;border:none;font-size:24px;color:#666;cursor:pointer;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.chat-input .tool-btn:active{background:#e0e0e0}
+.chat-input input{flex:1;padding:8px 12px;border:none;border-radius:6px;outline:none;font-size:15px;background:#fff;min-height:36px;max-height:100px}
+.send-btn{background:#07c160;color:#fff;border:none;border-radius:6px;width:36px;height:36px;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.send-btn:active{background:#06ad56}
+.send-btn.disabled{background:#aaa;cursor:default}
+
+/* 表情选择器 */
+.emoji-picker{display:none;padding:8px;background:#f7f7f7;border-top:1px solid #d9d9d9;max-height:200px;overflow-y:auto;flex-shrink:0}
+.emoji-picker.active{display:block}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.emoji-item{font-size:24px;text-align:center;padding:6px;cursor:pointer;border-radius:6px}
+.emoji-item:active{background:#e0e0e0}
+
+/* 录音状态 */
+.recording{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);color:#fff;padding:30px;display:none;align-items:center;justify-content:center;gap:20px;z-index:50;padding-bottom:max(30px, env(safe-area-inset-bottom))}
+.recording.active{display:flex}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:#f44336;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rec-time{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.rec-cancel{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;cursor:pointer}
+.rec-send{background:#07c160;border:none;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer}
+
+/* 语音消息 */
+.voice-msg{display:flex;align-items:center;gap:8px;min-width:120px;cursor:pointer}
+.voice-msg .play-btn{width:32px;height:32px;border-radius:50%;border:none;font-size:14px;cursor:pointer;flex-shrink:0}
+.voice-msg-me .play-btn{background:rgba(0,0,0,.15);color:#1e293b}
+.voice-msg-them .play-btn{background:#e5e5e5;color:#07c160}
+.voice-wave{flex:1;height:20px;display:flex;align-items:center;gap:2px}
+.voice-wave span{width:3px;border-radius:2px;animation:wave 1s ease-in-out infinite}
+.voice-msg-me .voice-wave span{background:rgba(0,0,0,.3)}
+.voice-msg-them .voice-wave span{background:#aaa}
+.voice-dur{font-size:11px;opacity:.7;flex-shrink:0}
+@keyframes wave{0%,100%{height:4px}50%{height:16px}}
+
+/* 图片消息 */
+.msg-img{max-width:200px;border-radius:4px;cursor:pointer;display:block}
+.img-preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column}
+.img-preview-overlay.active{display:flex}
+.img-preview-overlay img{max-width:95%;max-height:85vh;object-fit:contain}
+.img-preview-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:22px;cursor:pointer}
+
+/* 位置消息 */
+.msg-location{background:#e8f5e9;border-radius:6px;padding:8px 12px;cursor:pointer;min-width:180px}
+.msg-location .loc-name{font-size:14px;color:#1e293b;font-weight:500}
+.msg-location .loc-addr{font-size:12px;color:#666;margin-top:2px}
+.msg-location .loc-map{height:80px;background:linear-gradient(135deg,#c8e6c9,#a5d6a7);border-radius:4px;margin-top:6px;display:flex;align-items:center;justify-content:center;font-size:28px}
+
+/* 消息操作菜单 */
+.msg-menu{position:fixed;background:#4c4c4c;border-radius:8px;padding:4px 0;z-index:100;display:none;min-width:80px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.msg-menu.active{display:block}
+.msg-menu-item{padding:8px 16px;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap}
+.msg-menu-item:active{background:#5c5c5c}
+.msg-menu-item:first-child{border-radius:8px 8px 0 0}
+.msg-menu-item:last-child{border-radius:0 0 8px 8px}
+
+/* 转发面板 */
+.forward-panel{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:none;align-items:flex-end;justify-content:center}
+.forward-panel.active{display:flex}
+.forward-box{background:#fff;border-radius:16px 16px 0 0;width:100%;max-height:70vh;overflow-y:auto;padding:20px 16px;padding-bottom:max(20px, env(safe-area-inset-bottom))}
+.forward-box h3{text-align:center;font-size:16px;margin-bottom:16px;color:#1e293b}
+.forward-item{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.forward-item:active{background:#f5f5f5}
+
+/* 视频通话 */
 .video-screen{flex-direction:column;background:#000}
 .video-main{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
 .video-main video{width:100%;height:100%;object-fit:cover}
-.video-pip{position:absolute;top:16px;right:16px;width:120px;height:160px;border-radius:16px;overflow:hidden;border:2px solid rgba(255,255,255,.3);background:#1e293b}
+.video-pip{position:absolute;top:16px;right:16px;width:100px;height:140px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.3);background:#1e293b}
 .video-pip video{width:100%;height:100%;object-fit:cover}
 .video-controls{display:flex;justify-content:center;gap:16px;padding:20px;background:rgba(0,0,0,.8);flex-shrink:0;padding-bottom:max(20px, env(safe-area-inset-bottom))}
-.vc-btn{width:56px;height:56px;border-radius:50%;border:none;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.vc-btn-end{background:#ef4444;color:#fff}
+.vc-btn{width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.vc-btn-end{background:#f44336;color:#fff}
 .vc-btn-mute{background:#374151;color:#fff}
 .vc-btn-cam{background:#374151;color:#fff}
-.pending-item{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid #f1f5f9}
-.pending-item .info{flex:1;font-size:14px;color:#1e293b}
-.pending-item button{border:none;padding:6px 12px;border-radius:12px;font-size:12px;cursor:pointer;margin-left:6px}
-.btn-accept{background:#10b981;color:#fff}
-.btn-reject{background:#ef4444;color:#fff}
-.badge{background:#ef4444;color:#fff;font-size:11px;border-radius:10px;padding:2px 8px;margin-left:8px}
-.conn-status{font-size:12px;padding:4px 12px;border-radius:12px;display:inline-block;margin:8px 20px}
-.conn-ok{background:#dcfce7;color:#166534}
-.conn-no{background:#fef2f2;color:#991b1b}
 
-/* 语音消息 */
-.voice-msg{display:flex;align-items:center;gap:10px;min-width:140px;cursor:pointer}
-.voice-msg .play-btn{width:36px;height:36px;border-radius:50%;border:none;font-size:16px;cursor:pointer;flex-shrink:0}
-.voice-msg-me .play-btn{background:rgba(255,255,255,.3);color:#fff}
-.voice-msg-them .play-btn{background:#e2e8f0;color:#3b82f6}
-.voice-wave{flex:1;height:24px;display:flex;align-items:center;gap:2px}
-.voice-wave span{width:3px;border-radius:2px;animation:wave 1s ease-in-out infinite}
-.voice-msg-me .voice-wave span{background:rgba(255,255,255,.7)}
-.voice-msg-them .voice-wave span{background:#94a3b8}
-.voice-dur{font-size:12px;opacity:.8;flex-shrink:0}
-@keyframes wave{0%,100%{height:4px}50%{height:18px}}
-
-/* 录音状态 */
-.recording{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;padding:24px;display:none;align-items:center;justify-content:center;gap:16px;z-index:50;padding-bottom:max(24px, env(safe-area-inset-bottom))}
-.recording.active{display:flex}
-.rec-dot{width:12px;height:12px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.rec-time{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
-.rec-cancel{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;cursor:pointer}
-.rec-send{background:#10b981;border:none;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer}
-
-/* 图片消息 */
-.msg-img{max-width:220px;border-radius:12px;cursor:pointer;display:block}
-.img-preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column}
-.img-preview-overlay.active{display:flex}
-.img-preview-overlay img{max-width:95%;max-height:80vh;border-radius:8px;object-fit:contain}
-.img-preview-close{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:24px;cursor:pointer}
-
-/* 语音通话界面 */
-.voice-call-screen{flex-direction:column;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);color:#fff;align-items:center;justify-content:center}
-.voice-call-avatar{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff;margin-bottom:20px;position:relative}
-.voice-call-avatar.ringing::after{content:'';position:absolute;inset:-12px;border-radius:50%;border:3px solid rgba(59,130,246,.5);animation:ring-pulse 1.5s ease-out infinite}
+/* 语音通话 */
+.voice-call-screen{flex-direction:column;background:linear-gradient(180deg,#1e293b,#0f172a);color:#fff;align-items:center;justify-content:center}
+.voice-call-avatar{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;margin-bottom:16px;position:relative}
+.voice-call-avatar.ringing::after{content:'';position:absolute;inset:-10px;border-radius:50%;border:3px solid rgba(7,193,96,.4);animation:ring-pulse 1.5s ease-out infinite}
 @keyframes ring-pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
-.voice-call-name{font-size:24px;font-weight:700;margin-bottom:6px}
-.voice-call-status{font-size:15px;color:#94a3b8;margin-bottom:40px}
-.voice-call-duration{font-size:36px;font-weight:300;font-variant-numeric:tabular-nums;margin-bottom:40px}
-.voice-call-controls{display:flex;gap:24px;align-items:center}
+.voice-call-name{font-size:22px;font-weight:600;margin-bottom:4px}
+.voice-call-status{font-size:14px;color:#94a3b8;margin-bottom:30px}
+.voice-call-duration{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;margin-bottom:30px}
+.voice-call-controls{display:flex;gap:20px;align-items:center}
 .vc-btn-speaker{background:#374151;color:#fff}
 
-/* 修改密码 */
-.settings-section{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px}
-.settings-section h3{font-size:16px;color:#1e293b;margin-bottom:16px;font-weight:700}
-.settings-input{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;margin-bottom:10px;outline:none;background:#f8fafc}
-.settings-input:focus{border-color:#3b82f6;background:#fff}
+/* 来电 */
+.incoming-call{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:100}
+.incoming-call.active{display:flex}
+
+/* 搜索/添加 */
+.search-bar{padding:10px 16px;background:#f7f7f7;border-bottom:1px solid #e0e0e0}
+.search-bar input{width:100%;padding:8px 14px;border:none;border-radius:6px;outline:none;font-size:14px;background:#fff}
+.search-result{display:flex;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #f0f0f0}
+.search-result .info{flex:1}
+.search-result .info .name{font-weight:500;color:#1e293b;font-size:15px}
+.add-btn{background:#07c160;color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:13px;cursor:pointer}
+.empty{text-align:center;padding:60px 20px;color:#999}
+.empty .icon{font-size:44px;margin-bottom:10px}
+
+/* 设置页 */
+.settings-section{background:#fff;border-radius:0;padding:16px;margin-bottom:8px}
+.settings-section h3{font-size:15px;color:#1e293b;margin-bottom:12px;font-weight:600}
+.settings-input{width:100%;padding:10px 14px;border:none;border-bottom:1px solid #e5e5e5;font-size:15px;margin-bottom:10px;outline:none;background:transparent;border-radius:0}
+.settings-input:focus{border-bottom-color:#07c160}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f5f5f5;cursor:pointer}
+.settings-row:last-child{border-bottom:none}
+.settings-row .label{font-size:15px;color:#1e293b}
+.settings-row .value{font-size:14px;color:#999}
+
+/* 群聊 */
+.group-item{display:flex;align-items:center;padding:12px 16px;background:#fff;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.group-item:active{background:#ececec}
+
+/* 正在输入 */
+.typing-indicator{font-size:12px;color:#999;padding:2px 16px;flex-shrink:0;height:18px}
+
+/* 好友详情/个人页 */
+.profile-header{background:#fff;padding:20px 16px;display:flex;align-items:center;margin-bottom:8px}
+.profile-avatar{width:56px;height:56px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:24px;margin-right:14px;flex-shrink:0}
+.profile-info{flex:1}
+.profile-name{font-size:18px;font-weight:600;color:#1e293b}
+.profile-id{font-size:13px;color:#999;margin-top:2px}
+.profile-actions{display:flex;gap:8px;margin-top:12px;padding:0 16px}
+.profile-actions button{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;cursor:pointer;font-weight:500}
+
+/* 位置选择 */
+.location-picker{position:fixed;inset:0;background:#fff;z-index:150;display:none;flex-direction:column}
+.location-picker.active{display:flex}
+.location-map{flex:1;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#666}
+.location-map .icon{font-size:64px;margin-bottom:12px}
+.location-info{padding:12px 16px;background:#fff;border-top:1px solid #e0e0e0}
+.location-info p{font-size:14px;color:#1e293b;margin-bottom:4px}
+.location-info .addr{font-size:12px;color:#999}
+.location-actions{display:flex;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #e0e0e0;padding-bottom:max(12px, env(safe-area-inset-bottom))}
+.location-actions button{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;cursor:pointer;font-weight:500}
 </style>
 </head>
 <body>
@@ -150,7 +226,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <div id="loginError" class="error"></div>
 <input type="text" id="loginUser" placeholder="用户名" autocomplete="username">
 <input type="password" id="loginPass" placeholder="密码" autocomplete="current-password">
-<button class="btn btn-blue" onclick="doLogin()">登录</button>
+<button class="btn btn-green" onclick="doLogin()">登录</button>
 <p class="link">没有账号？<a href="#" onclick="show('registerScreen')">立即注册</a></p>
 </div>
 </div>
@@ -168,39 +244,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 </div>
 </div>
 
+<!-- 主页 -->
 <div id="mainScreen" class="screen app-screen">
 <div class="app-header">
 <h2>Friend App</h2>
-<button onclick="doLogout()">退出</button>
+<div><span class="conn-dot conn-off" id="connDot"></span><button onclick="doLogout()">退出</button></div>
 </div>
-<div id="connStatus" class="conn-status conn-no">正在连接...</div>
 <div class="tab-bar">
-<div class="tab active" onclick="switchTab('friends',this)">好友</div>
-<div class="tab" onclick="switchTab('add',this)">添加</div>
-<div class="tab" onclick="switchTab('me',this)">我的</div>
+<div class="tab active" onclick="switchTab('chats',this)"><span class="tab-icon">💬</span>聊天</div>
+<div class="tab" onclick="switchTab('contacts',this)"><span class="tab-icon">👥</span>通讯录</div>
+<div class="tab" onclick="switchTab('discover',this)"><span class="tab-icon">🔍</span>发现</div>
+<div class="tab" onclick="switchTab('me',this)"><span class="tab-icon">😀</span>我</div>
 </div>
 <div class="content" id="tabContent"></div>
 </div>
 
+<!-- 聊天页 -->
 <div id="chatScreen" class="screen app-screen">
 <div class="chat-header">
 <button class="back" onclick="closeChat()">‹</button>
-<div class="title"><h3 id="chatName"></h3><p id="chatStatus">在线</p></div>
-<div class="call-btns">
-<button class="call-btn call-btn-voice" onclick="startVoiceCall()">📞 语音</button>
-<button class="call-btn call-btn-video" onclick="startCall()">📹 视频</button>
+<div class="title"><h3 id="chatName"></h3><p id="chatStatus"></p></div>
+<button class="more-btn" onclick="toggleChatMenu()">⋯</button>
 </div>
-</div>
+<div class="typing-indicator" id="typingIndicator"></div>
 <div class="messages" id="msgList"></div>
+<div class="emoji-picker" id="emojiPicker"></div>
 <div class="chat-input">
-<button onclick="toggleRecording()" id="micBtn" style="background:#f0f2f5;color:#64748b;font-size:20px">🎤</button>
-<button onclick="document.getElementById('imgPicker').click()" style="background:#f0f2f5;color:#64748b;font-size:20px">📷</button>
+<button class="tool-btn" onclick="toggleRecording()" id="micBtn">🎤</button>
+<button class="tool-btn" onclick="toggleEmoji()">😊</button>
+<button class="tool-btn" onclick="document.getElementById('imgPicker').click()">📷</button>
+<button class="tool-btn" onclick="showLocationPicker()">📍</button>
 <input type="file" id="imgPicker" accept="image/*" style="display:none" onchange="onImagePicked(event)">
-<input type="text" id="msgInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMsg()">
-<button class="send-btn" onclick="sendMsg()">↑</button>
+<input type="text" id="msgInput" placeholder="输入消息..." oninput="onMsgInput()" onkeydown="if(event.key==='Enter')sendMsg()">
+<button class="send-btn" id="sendBtn" onclick="sendMsg()">↑</button>
 </div>
-
-<!-- 录音状态栏 -->
 <div class="recording" id="recordingBar">
 <div class="rec-dot"></div>
 <span class="rec-time" id="recTime">0:00</span>
@@ -209,7 +286,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 </div>
 </div>
 
-<!-- 视频通话界面 -->
+<!-- 视频通话 -->
 <div id="videoScreen" class="screen video-screen">
 <div class="video-main">
 <video id="remoteVideo" autoplay playsinline style="background:#1e293b"></video>
@@ -222,28 +299,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 </div>
 </div>
 
-<!-- 语音通话界面 -->
+<!-- 语音通话 -->
 <div id="voiceCallScreen" class="screen voice-call-screen">
 <div class="voice-call-avatar ringing" id="vcAvatar">?</div>
 <div class="voice-call-name" id="vcName">未知</div>
 <div class="voice-call-status" id="vcStatus">正在呼叫...</div>
 <div class="voice-call-duration" id="vcDuration" style="display:none">0:00</div>
-<div class="voice-call-controls" id="vcControls">
+<div class="voice-call-controls">
 <button class="vc-btn vc-btn-mute" onclick="toggleVoiceMute()" id="vMuteBtn">🎤</button>
 <button class="vc-btn vc-btn-speaker" onclick="toggleSpeaker()" id="vSpeakerBtn">🔊</button>
 <button class="vc-btn vc-btn-end" onclick="endVoiceCall()">📵</button>
 </div>
 </div>
 
-<!-- 来电提示（语音/视频通用） -->
-<div id="incomingCall" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);align-items:center;justify-content:center;z-index:100">
+<!-- 来电 -->
+<div class="incoming-call" id="incomingCall">
 <div style="text-align:center;color:#fff">
-<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:36px;animation:ring-pulse 1.5s ease-out infinite" id="callerAv">?</div>
-<h2 id="callerName">未知</h2>
-<p style="color:#94a3b8;margin:8px 0 24px" id="callTypeLabel">通话邀请</p>
-<div style="display:flex;justify-content:center;gap:24px">
-<button onclick="rejectCall()" style="width:64px;height:64px;border-radius:50%;border:none;background:#ef4444;color:#fff;font-size:28px;cursor:pointer">📵</button>
-<button onclick="acceptCallUI()" style="width:64px;height:64px;border-radius:50%;border:none;background:#10b981;color:#fff;font-size:28px;cursor:pointer">📞</button>
+<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#07c160,#06ad56);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;animation:ring-pulse 1.5s ease-out infinite" id="callerAv">?</div>
+<h2 id="callerName" style="font-size:20px">未知</h2>
+<p style="color:#94a3b8;margin:6px 0 20px;font-size:14px" id="callTypeLabel">通话邀请</p>
+<div style="display:flex;justify-content:center;gap:32px">
+<button onclick="rejectCall()" style="width:60px;height:60px;border-radius:50%;border:none;background:#f44336;color:#fff;font-size:26px;cursor:pointer">📵</button>
+<button onclick="acceptCallUI()" style="width:60px;height:60px;border-radius:50%;border:none;background:#07c160;color:#fff;font-size:26px;cursor:pointer">📞</button>
 </div>
 </div>
 </div>
@@ -254,164 +331,174 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <img id="imgPreviewImg" src="" alt="">
 </div>
 
-<!-- PeerJS 用于实时 P2P 通信 -->
+<!-- 消息菜单 -->
+<div class="msg-menu" id="msgMenu"></div>
+
+<!-- 转发面板 -->
+<div class="forward-panel" id="forwardPanel" onclick="if(event.target===this)closeForward()">
+<div class="forward-box" id="forwardBox"></div>
+</div>
+
+<!-- 位置选择器 -->
+<div class="location-picker" id="locationPicker">
+<div style="padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0">
+<button style="background:none;border:none;font-size:20px;cursor:pointer;color:#1e293b" onclick="closeLocationPicker()">‹</button>
+<span style="flex:1;text-align:center;font-size:16px;font-weight:500">发送位置</span>
+<div style="width:28px"></div>
+</div>
+<div class="location-map" id="locationMap">
+<div class="icon">📍</div>
+<p>正在获取位置...</p>
+</div>
+<div class="location-info" id="locationInfo">
+<p id="locName">获取中...</p>
+<p class="addr" id="locAddr"></p>
+</div>
+<div class="location-actions">
+<button style="background:#f5f5f5;color:#666" onclick="closeLocationPicker()">取消</button>
+<button style="background:#07c160;color:#fff" onclick="sendLocation()">发送位置</button>
+</div>
+</div>
+
+<!-- 好友详情页 -->
+<div id="profileScreen" class="screen app-screen" style="background:#ededed">
+<div style="padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;background:#ededed">
+<button style="background:none;border:none;font-size:22px;cursor:pointer;color:#1e293b" onclick="closeProfile()">‹</button>
+<span style="flex:1;text-align:center;font-size:16px;font-weight:500">详细资料</span>
+<div style="width:28px"></div>
+</div>
+<div class="content" id="profileContent"></div>
+</div>
+
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
 <script>
-// ===== 共享数据库 =====
+// ===== 数据库 =====
 const DB_KEY='friendAppDB';
-function loadDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||{users:[],friendships:[],messages:[],nextId:1}}catch{return{users:[],friendships:[],messages:[],nextId:1}}}
+function loadDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||{users:[],friendships:[],messages:[],groups:[],nextId:1}}catch{return{users:[],friendships:[],messages:[],groups:[],nextId:1}}}
 function saveDB(d){localStorage.setItem(DB_KEY,JSON.stringify(d))}
 
-// 初始化预设用户
+// 初始化
 (function(){
   let db=loadDB();
   if(!db.users.length){
     db.users=[
-      {id:1,username:'alice',password:'123456',nickname:'爱丽丝',avatar:''},
-      {id:2,username:'bob',password:'123456',nickname:'鲍勃',avatar:''},
-      {id:3,username:'charlie',password:'123456',nickname:'查理',avatar:''}
+      {id:1,username:'alice',password:'123456',nickname:'爱丽丝',avatar:'',remark:{}},
+      {id:2,username:'bob',password:'123456',nickname:'鲍勃',avatar:'',remark:{}},
+      {id:3,username:'charlie',password:'123456',nickname:'查理',avatar:'',remark:{}}
     ];
     db.friendships=[
       {id:1,user_id:1,friend_id:2,status:'accepted'},
       {id:2,user_id:1,friend_id:3,status:'accepted'},
       {id:3,user_id:2,friend_id:3,status:'accepted'}
     ];
+    db.groups=[];
     db.nextId=10;
     saveDB(db);
   }
+  // 升级旧数据
+  db.users.forEach(u=>{if(!u.remark)u.remark={}});
+  if(!db.groups)db.groups=[];
+  saveDB(db);
 })();
 
 // ===== 状态 =====
-let user=null;
-let curFriend=null;
-let localStream=null;
-let myPeer=null;
-let connections={};
-let onlinePeers=new Set();
-let currentMediaCall=null; // 当前媒体通话（语音/视频）
-let currentCallType=null; // 'voice' or 'video'
-let voiceCallTimer=null;
-let voiceCallStart=0;
-let isSpeakerOn=true;
+let user=null,curChat=null,curChatType='friend'; // friend | group
+let localStream=null,myPeer=null,connections={},onlinePeers=new Set();
+let currentMediaCall=null,currentCallType=null,voiceCallTimer=null,voiceCallStart=0,isSpeakerOn=true;
+let pinnedChats=[]; // 置顶聊天ID列表
+let favorites=[]; // 收藏消息
+let currentLoc=null; // 当前位置
+
+// 加载置顶和收藏
+(function(){
+  try{pinnedChats=JSON.parse(localStorage.getItem('friendAppPinned'))||[]}catch{}
+  try{favorites=JSON.parse(localStorage.getItem('friendAppFav'))||[]}catch{}
+})();
+function savePinned(){localStorage.setItem('friendAppPinned',JSON.stringify(pinnedChats))}
+function saveFav(){localStorage.setItem('friendAppFav',JSON.stringify(favorites))}
 
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function err(el,m){el.textContent=m;el.style.display='block'}
 function ok(el,m){el.textContent=m;el.style.display='block'}
 function avClass(id){return 'av'+((id%5)+1)}
+function escHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
-// ===== PeerJS 连接 =====
+// ===== 表情列表 =====
+const EMOJIS=['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','😊','😇','🥰','😍','🤩','😘','😗','😚','😙','🥲','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔','🫣','🤐','🤨','😐','😑','😶','🫥','😏','😒','🙄','😬','🤥','😌','😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🥵','🥶','🥴','😵','🤯','🤠','🥳','🥸','😎','🤓','🧐','😕','🫤','😟','🙁','☹️','😮','😯','😲','😳','🥺','🥹','😦','😧','😨','😰','😥','😢','😭','😱','😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬','😈','👿','💀','☠️','💩','🤡','👹','👺','👻','👽','👾','🤖','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','💋','💌','💘','💝','💖','💗','💓','💞','💕','💟','❣️','💔','❤️','🧡','💛','💚','💙','💜','🤎','🖤','🤍','💯','💢','💥','💫','💦','💨','🕳️','💣','💬','👁️‍🗨️','🗨️','🗯️','💭','💤','👋','🤚','🖐️','✋','🖖','🫱','🫲','🫳','🫴','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','🫵','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','👐','🤲','🤝','🙏','✍️','💅','🤳','💪','🦾','🦿','🦵','🦶','👂','🦻','👃','🧠','🫀','🫁','🦷','🦴','👀','👁️','👅','👄','🫦','👶','🧒','👦','👧','🧑','👱','👨','🧔','👩','🧓','👴','👵','🙍','🙎','🙅','🙆','💁','🙋','🧏','🙇','🤦','🤷','👮','🕵️','💂','🥷','👷','🫅','🤴','👸','👳','👲','🧕','🤵','👰','🤰','🫃','🫄','🤱','👼','🎅','🤶','🦸','🦹','🧙','🧚','🧛','🧜','🧝','🧞','🧟','🧌','💆','💇','🚶','🧍','🧎','🏃','💃','🕺','🕴️','👯','🧖','🧗','🤸','⛹️','🏋️','🚴','🚵','🤼','🤽','🤾','🤺','⛷️','🏂','🏌️','🏇','🏊','🤹','🧘','🛀','🛌','👯‍♀️','👯‍♂️'];
+
+// ===== PeerJS =====
 function initPeer(){
   if(myPeer)return;
   const peerId='friendapp-user-'+user.id;
-  myPeer=new Peer(peerId,{
-    debug:0,
-    config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}
-  });
-
+  myPeer=new Peer(peerId,{debug:0,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
   myPeer.on('open',id=>{
-    console.log('PeerJS 已连接:',id);
-    document.getElementById('connStatus').className='conn-status conn-ok';
-    document.getElementById('connStatus').textContent='🟢 已连接';
+    document.getElementById('connDot').className='conn-dot conn-on';
     broadcastOnline();
     setTimeout(()=>deliverAllPending(),2000);
   });
-
-  // 接收媒体通话（语音/视频）
   myPeer.on('call',call=>{
-    console.log('收到通话请求:',call.options||call.metadata);
     const remoteUserId=parseInt(call.peer.replace('friendapp-user-',''));
-    const db=loadDB();
-    const remoteUser=db.users.find(u=>u.id===remoteUserId);
-    const callerName=remoteUser?remoteUser.nickname||remoteUser.username:'未知';
+    const db=loadDB();const remoteUser=db.users.find(u=>u.id===remoteUserId);
+    const callerName=remoteUser?getDisplayName(remoteUser):'未知';
     const callType=call.metadata&&call.metadata.type||'voice';
-
-    // 显示来电
     document.getElementById('callerName').textContent=callerName;
-    document.getElementById('callerAv').textContent=callerName[0].toUpperCase();
+    document.getElementById('callerAv').textContent=callerName[0];
     document.getElementById('callTypeLabel').textContent=callType==='video'?'📹 视频通话邀请':'📞 语音通话邀请';
-    document.getElementById('incomingCall').style.display='flex';
-
+    document.getElementById('incomingCall').classList.add('active');
     window._incomingCall={call,callType,remoteUserId,callerName};
     playRingtone();
   });
-
-  myPeer.on('connection',conn=>{
-    handleDataConnection(conn);
-  });
-
+  myPeer.on('connection',conn=>handleDataConnection(conn));
   myPeer.on('error',e=>{
-    console.error('PeerJS 错误:',e);
-    if(e.type==='unavailable-id'){
-      myPeer.destroy();myPeer=null;
-      setTimeout(()=>initPeer(),2000);
-    }
+    if(e.type==='unavailable-id'){myPeer.destroy();myPeer=null;setTimeout(()=>initPeer(),2000)}
   });
-
   myPeer.on('disconnected',()=>{
-    document.getElementById('connStatus').className='conn-status conn-no';
-    document.getElementById('connStatus').textContent='🔴 已断开，重连中...';
+    document.getElementById('connDot').className='conn-dot conn-off';
     setTimeout(()=>{if(myPeer)myPeer.reconnect()},3000);
   });
 }
 
 function handleDataConnection(conn){
   const remoteUserId=parseInt(conn.peer.replace('friendapp-user-',''));
-  connections[remoteUserId]=conn;
-  onlinePeers.add(remoteUserId);
-
+  connections[remoteUserId]=conn;onlinePeers.add(remoteUserId);
   conn.on('data',data=>{
-    if(data.type==='online'){
-      onlinePeers.add(data.userId);
-      updateFriendStatus();
-      deliverPendingMessages(data.userId);
-      // 同步数据库
-      const db=loadDB();
-      conn.send({type:'db-sync',db:db});
-    }else if(data.type==='message'){
-      receiveMessage(data);
-    }else if(data.type==='call-offer'){
-      // 旧版视频通话通知（兼容）
-      document.getElementById('callerName').textContent=data.callerName||'未知';
-      document.getElementById('callTypeLabel').textContent='📹 视频通话邀请';
-      document.getElementById('incomingCall').style.display='flex';
-      window._callData=data;
-      playRingtone();
-    }else if(data.type==='call-reject'){
-      alert('对方拒绝了通话');
-    }else if(data.type==='db-sync'){
-      mergeDB(data.db);
-    }else if(data.type==='messages-batch'){
-      (data.messages||[]).forEach(m=>receiveMessage({msg:m},true));
-    }else if(data.type==='msg-ack'){
-      markMsgDelivered(data.msgId);
-    }else if(data.type==='search-request'){
-      // 收到跨设备搜索请求，查找本地用户并返回结果
-      handleSearchRequest(conn,data);
-    }else if(data.type==='search-response'){
-      // 收到搜索结果，合并到本地
-      handleSearchResponse(data);
-    }else if(data.type==='voice-call-request'){
-      // 语音通话请求（数据通道通知）
-      handleVoiceCallRequest(conn,data);
+    switch(data.type){
+      case 'online':
+        onlinePeers.add(data.userId);updateStatus();
+        deliverPendingMessages(data.userId);
+        const db=loadDB();conn.send({type:'db-sync',db});
+        break;
+      case 'message':receiveMessage(data);break;
+      case 'db-sync':mergeDB(data.db);break;
+      case 'messages-batch':(data.messages||[]).forEach(m=>receiveMessage({msg:m},true));break;
+      case 'msg-ack':markMsgDelivered(data.msgId);break;
+      case 'search-request':handleSearchRequest(conn,data);break;
+      case 'search-response':handleSearchResponse(data);break;
+      case 'call-reject':alert('对方拒绝了通话');break;
+      case 'call-offer':
+        document.getElementById('callerName').textContent=data.callerName||'未知';
+        document.getElementById('callTypeLabel').textContent='📹 视频通话邀请';
+        document.getElementById('incomingCall').classList.add('active');
+        window._callData=data;playRingtone();break;
+      case 'typing':
+        if(curChat&&curChat.id===data.fromId&&curChatType==='friend'){
+          document.getElementById('typingIndicator').textContent='对方正在输入...';
+          clearTimeout(window._typingTimer);
+          window._typingTimer=setTimeout(()=>{document.getElementById('typingIndicator').textContent=''},3000);
+        }break;
+      case 'msg-recall':handleMsgRecall(data);break;
+      case 'group-msg':receiveGroupMsg(data);break;
+      case 'nickname-update':handleNicknameUpdate(data);break;
     }
   });
-
-  conn.on('close',()=>{
-    delete connections[remoteUserId];
-    onlinePeers.delete(remoteUserId);
-    updateFriendStatus();
-  });
-
+  conn.on('close',()=>{delete connections[remoteUserId];onlinePeers.delete(remoteUserId);updateStatus()});
   conn.on('error',e=>console.error('连接错误:',e));
-
-  if(curFriend&&curFriend.id===remoteUserId){
+  if(curChat&&curChat.id===remoteUserId&&curChatType==='friend'){
     document.getElementById('chatStatus').textContent='🟢 在线';
-    document.getElementById('chatStatus').className='online';
   }
 }
 
-// 广播上线
 function broadcastOnline(){
   const db=loadDB();
   const fids=db.friendships.filter(f=>(f.user_id===user.id||f.friend_id===user.id)&&f.status==='accepted')
@@ -419,153 +506,178 @@ function broadcastOnline(){
   fids.forEach(fid=>connectToPeer(fid));
 }
 
-// ===== 离线消息队列 =====
-const PENDING_KEY='friendAppPending';
-function getPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY))||{}}catch{return{}}}
-function savePending(p){localStorage.setItem(PENDING_KEY,JSON.stringify(p))}
-function queueMessage(msg){const p=getPending();const key=String(msg.receiver_id);if(!p[key])p[key]=[];p[key].push(msg);savePending(p)}
-function deliverPendingMessages(friendId){
-  const p=getPending();const key=String(friendId);const msgs=p[key]||[];
-  if(!msgs.length)return;
-  const conn=connections[friendId];if(!conn||!conn.open)return;
-  conn.send({type:'messages-batch',messages:msgs});
-  msgs.forEach(m=>{setTimeout(()=>{if(conn.open)conn.send({type:'msg-ack',msgId:m.id})},200)});
-  delete p[key];savePending(p);
-}
-function markMsgDelivered(msgId){const db=loadDB();const m=db.messages.find(x=>x.id===msgId);if(m){m.delivered=true;saveDB(db)}}
-function deliverAllPending(){const p=getPending();Object.keys(p).forEach(fid=>{const id=parseInt(fid);if(onlinePeers.has(id))deliverPendingMessages(id)})}
-function updateFriendStatus(){
-  document.querySelectorAll('[data-fid]').forEach(el=>{
-    const fid=parseInt(el.dataset.fid);const statusEl=el.querySelector('.friend-status');
-    if(statusEl){statusEl.textContent=onlinePeers.has(fid)?'🟢 在线':'⚫ 离线';statusEl.className='friend-status '+(onlinePeers.has(fid)?'online':'offline')}
-  });
-  if(curFriend){
-    const s=onlinePeers.has(curFriend.id)?'🟢 在线':'⚫ 离线';
-    document.getElementById('chatStatus').textContent=s;
-    document.getElementById('chatStatus').className=onlinePeers.has(curFriend.id)?'online':'offline';
-  }
-}
-
 function connectToPeer(friendId){
   if(connections[friendId])return;
-  const peerId='friendapp-user-'+friendId;
   try{
-    const conn=myPeer.connect(peerId,{reliable:true});
+    const conn=myPeer.connect('friendapp-user-'+friendId,{reliable:true});
     conn.on('open',()=>{
       connections[friendId]=conn;onlinePeers.add(friendId);
       conn.send({type:'online',userId:user.id,nickname:user.nickname});
-      updateFriendStatus();deliverPendingMessages(friendId);
+      updateStatus();deliverPendingMessages(friendId);
     });
     handleDataConnection(conn);
   }catch(e){console.log('连接失败:',e)}
 }
 
-// ===== 跨设备搜索 =====
-let searchResultCache={}; // 缓存跨设备搜索结果
+// 离线消息
+const PENDING_KEY='friendAppPending';
+function getPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY))||{}}catch{return{}}}
+function savePending(p){localStorage.setItem(PENDING_KEY,JSON.stringify(p))}
+function queueMessage(msg){const p=getPending();const key=String(msg.receiver_id);if(!p[key])p[key]=[];p[key].push(msg);savePending(p)}
+function deliverPendingMessages(fid){
+  const p=getPending();const key=String(fid);const msgs=p[key]||[];if(!msgs.length)return;
+  const conn=connections[fid];if(!conn||!conn.open)return;
+  conn.send({type:'messages-batch',messages:msgs});
+  msgs.forEach(m=>{setTimeout(()=>{if(conn.open)conn.send({type:'msg-ack',msgId:m.id})},200)});
+  delete p[key];savePending(p);
+}
+function markMsgDelivered(msgId){const db=loadDB();const m=db.messages.find(x=>x.id===msgId);if(m){m.delivered=true;saveDB(db)}}
+function deliverAllPending(){const p=getPending();Object.keys(p).forEach(fid=>{if(onlinePeers.has(parseInt(fid)))deliverPendingMessages(parseInt(fid))})}
 
-function handleSearchRequest(conn,data){
-  const q=data.query.toLowerCase();
-  const db=loadDB();
-  const results=db.users.filter(u=>u.id!==data.fromUserId&&(u.username.toLowerCase().includes(q)||u.nickname.toLowerCase().includes(q)))
-    .map(u=>({id:u.id,username:u.username,nickname:u.nickname}));
-  if(results.length&&conn.open){
-    conn.send({type:'search-response',results:results,query:q,requestId:data.requestId});
+function updateStatus(){
+  if(curChat&&curChatType==='friend'){
+    const s=onlinePeers.has(curChat.id)?'🟢 在线':'⚫ 离线';
+    document.getElementById('chatStatus').textContent=s;
   }
+  document.querySelectorAll('[data-fid]').forEach(el=>{
+    const fid=parseInt(el.dataset.fid);const s=el.querySelector('.friend-status');
+    if(s)s.textContent=onlinePeers.has(fid)?'🟢':'⚫';
+  });
 }
 
-function handleSearchResponse(data){
-  if(!data.results||!data.results.length)return;
-  const db=loadDB();
-  // 合并新发现的用户到本地数据库
-  data.results.forEach(u=>{
-    if(!db.users.find(x=>x.id===u.id)){
-      db.users.push({id:u.id,username:u.username,nickname:u.nickname,password:'',avatar:''});
-    }
-  });
-  db.nextId=Math.max(db.nextId,...data.results.map(u=>u.id+1));
-  saveDB(db);
-  // 缓存结果并刷新搜索显示
-  searchResultCache[data.requestId]=data.results;
-  refreshSearchDisplay();
+// 获取显示名（支持备注）
+function getDisplayName(u){
+  if(!u)return'未知';
+  const db=loadDB();const me=db.users.find(x=>x.id===user.id);
+  const remark=me&&me.remark&&me.remark[u.id];
+  return remark||u.nickname||u.username;
 }
 
 // ===== 登录/注册 =====
 function doLogin(){
-  const u=document.getElementById('loginUser').value.trim();
-  const p=document.getElementById('loginPass').value;
+  const u=document.getElementById('loginUser').value.trim(),p=document.getElementById('loginPass').value;
   if(!u||!p){err(document.getElementById('loginError'),'请输入用户名和密码');return}
-  const db=loadDB();
-  const found=db.users.find(x=>x.username===u&&x.password===p);
+  const db=loadDB();const found=db.users.find(x=>x.username===u&&x.password===p);
   if(!found){err(document.getElementById('loginError'),'用户名或密码错误');return}
   user={id:found.id,username:found.username,nickname:found.nickname,avatar:''};
-  localStorage.setItem('friendAppUser',JSON.stringify(user));
-  enterApp();
+  localStorage.setItem('friendAppUser',JSON.stringify(user));enterApp();
 }
-
 function doRegister(){
-  const u=document.getElementById('regUser').value.trim();
-  const n=document.getElementById('regNick').value.trim();
-  const p=document.getElementById('regPass').value;
+  const u=document.getElementById('regUser').value.trim(),n=document.getElementById('regNick').value.trim(),p=document.getElementById('regPass').value;
   if(!u||!p){err(document.getElementById('regError'),'请输入用户名和密码');return}
   if(u.length<2){err(document.getElementById('regError'),'用户名至少2个字符');return}
   if(p.length<4){err(document.getElementById('regError'),'密码至少4个字符');return}
   const db=loadDB();
   if(db.users.find(x=>x.username===u)){err(document.getElementById('regError'),'用户名已存在');return}
-  const newUser={id:db.nextId++,username:u,password:p,nickname:n||u,avatar:''};
-  db.users.push(newUser);saveDB(db);
-  user={id:newUser.id,username:newUser.username,nickname:newUser.nickname,avatar:''};
-  localStorage.setItem('friendAppUser',JSON.stringify(user));
-  enterApp();
+  const nu={id:db.nextId++,username:u,password:p,nickname:n||u,avatar:'',remark:{}};
+  db.users.push(nu);saveDB(db);
+  user={id:nu.id,username:nu.username,nickname:nu.nickname,avatar:''};
+  localStorage.setItem('friendAppUser',JSON.stringify(user));enterApp();
 }
-
 function doLogout(){
   if(myPeer){myPeer.destroy();myPeer=null}
   connections={};onlinePeers=new Set();
   if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}
   if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
-  user=null;localStorage.removeItem('friendAppUser');
-  show('loginScreen');
+  user=null;localStorage.removeItem('friendAppUser');show('loginScreen');
 }
-
-function enterApp(){
-  show('mainScreen');
-  switchTab('friends',document.querySelector('.tab'));
-  initPeer();
-}
+function enterApp(){show('mainScreen');switchTab('chats',document.querySelector('.tab'));initPeer()}
 
 // ===== Tab =====
 function switchTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
-  if(tab==='friends')renderFriends();
-  else if(tab==='add')renderAdd();
+  if(tab==='chats')renderChats();
+  else if(tab==='contacts')renderContacts();
+  else if(tab==='discover')renderDiscover();
   else if(tab==='me')renderMe();
 }
 
-// ===== 好友列表 =====
-function renderFriends(){
+// ===== 聊天列表（微信风格：最近消息） =====
+function renderChats(){
+  const db=loadDB();
+  // 收集所有有消息的聊天
+  const chatMap={};
+  db.messages.forEach(m=>{
+    if(m.recalled)return;
+    let chatKey,otherId,chatName;
+    if(m.group_id){
+      chatKey='group-'+m.group_id;
+      const grp=db.groups.find(g=>g.id===m.group_id);
+      if(!grp)return;
+      chatName=grp.name;otherId=m.group_id;
+    }else{
+      if(m.sender_id===user.id)otherId=m.receiver_id;
+      else if(m.receiver_id===user.id)otherId=m.sender_id;
+      else return;
+      chatKey='friend-'+otherId;
+      const u=db.users.find(x=>x.id===otherId);
+      chatName=u?getDisplayName(u):'未知';
+    }
+    if(!chatMap[chatKey]||new Date(m.created_at)>new Date(chatMap[chatKey].time)){
+      chatMap[chatKey]={key:chatKey,otherId,chatName,lastMsg:m,time:m.created_at,unread:0,type:m.group_id?'group':'friend'};
+    }
+  });
+  // 计算未读
+  db.messages.filter(m=>!m.recalled&&m.receiver_id===user.id&&!m.group_id&&!m.read).forEach(m=>{
+    const k='friend-'+m.sender_id;if(chatMap[k])chatMap[k].unread++;
+  });
+  db.messages.filter(m=>!m.recalled&&m.group_id&&!m.read&&m.sender_id!==user.id).forEach(m=>{
+    const k='group-'+m.group_id;if(chatMap[k])chatMap[k].unread++;
+  });
+
+  let chats=Object.values(chatMap).sort((a,b)=>new Date(b.time)-new Date(a.time));
+  // 置顶排前面
+  chats.sort((a,b)=>(pinnedChats.includes(b.key)?1:0)-(pinnedChats.includes(a.key)?1:0));
+
+  let html='';
+  if(!chats.length){html='<div class="empty"><div class="icon">💬</div><p>暂无聊天</p></div>'}
+  else{
+    chats.forEach(c=>{
+      const t=new Date(c.time);const today=new Date();
+      let timeStr=t.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+      if(t.toDateString()!==today.toDateString())timeStr=t.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'});
+      const lastText=c.lastMsg.type==='voice'?'🎤 语音消息':c.lastMsg.type==='image'?'📷 图片':c.lastMsg.type==='location'?'📍 位置':c.lastMsg.type==='recall'?'↩️ 已撤回':c.lastMsg.content||'';
+      const pinned=pinnedChats.includes(c.key);
+      const avCls=c.type==='group'?'av-group':avClass(c.otherId);
+      html+=`<div class="friend-item ${pinned?'pinned':''}" onclick="openChat('${c.key}')"><div class="avatar ${avCls}">${c.chatName[0]}</div><div style="flex:1;position:relative"><div class="friend-name">${escHtml(c.chatName)}${c.unread?'<span class="badge">'+c.unread+'</span>':''}</div><div class="last-msg">${escHtml(lastText)}</div><span class="msg-time-small">${timeStr}</span></div></div>`;
+    });
+  }
+  document.getElementById('tabContent').innerHTML=html;
+}
+
+// ===== 通讯录 =====
+function renderContacts(){
   const db=loadDB();
   const fids=db.friendships.filter(f=>(f.user_id===user.id||f.friend_id===user.id)&&f.status==='accepted')
     .map(f=>f.user_id===user.id?f.friend_id:f.user_id);
   const friends=db.users.filter(u=>fids.includes(u.id));
   const pending=db.friendships.filter(f=>f.friend_id===user.id&&f.status==='pending');
+  const groups=db.groups.filter(g=>g.members.includes(user.id));
 
   let html='';
+  // 好友请求
   if(pending.length){
-    html+='<div style="padding:12px 20px;background:#fffbeb;border-bottom:1px solid #fef3c7"><p style="font-weight:600;color:#92400e;font-size:14px">好友请求 ('+pending.length+')</p></div>';
+    html+='<div style="padding:10px 16px;background:#fffbeb;border-bottom:1px solid #fef3c7"><p style="font-weight:600;color:#92400e;font-size:14px">好友请求 ('+pending.length+')</p></div>';
     pending.forEach(p=>{
       const from=db.users.find(u=>u.id===p.user_id);
-      html+=`<div class="pending-item"><div class="info">${from?.nickname||from?.username} 想加你为好友</div><button class="btn-accept" onclick="respondReq(${p.id},'accept')">接受</button><button class="btn-reject" onclick="respondReq(${p.id},'reject')">拒绝</button></div>`;
+      html+=`<div class="friend-item"><div class="avatar ${avClass(p.user_id)}">${(from?.nickname||'?')[0]}</div><div style="flex:1"><div class="friend-name">${from?escHtml(from.nickname||from.username):'未知'}</div><div class="friend-status">请求添加好友</div></div><button class="add-btn" onclick="respondReq(${p.id},'accept')" style="margin-right:6px">接受</button><button style="background:#f5f5f5;color:#666;border:none;padding:5px 14px;border-radius:6px;font-size:13px;cursor:pointer" onclick="respondReq(${p.id},'reject')">拒绝</button></div>`;
     });
   }
-
-  if(!friends.length&&!pending.length){
-    html='<div class="empty"><div class="icon">👋</div><p>还没有好友<br>去"添加"找找看</p></div>';
-  }else{
+  // 群聊
+  if(groups.length){
+    html+='<div style="padding:8px 16px;color:#999;font-size:12px">群聊</div>';
+    groups.forEach(g=>{
+      html+=`<div class="friend-item" onclick="openChat('group-${g.id}')"><div class="avatar av-group">👥</div><div style="flex:1"><div class="friend-name">${escHtml(g.name)}</div><div class="friend-status">${g.members.length}人</div></div></div>`;
+    });
+  }
+  // 好友
+  html+='<div style="padding:8px 16px;color:#999;font-size:12px">好友 ('+friends.length+')</div>';
+  if(!friends.length)html+='<div class="empty"><div class="icon">👥</div><p>还没有好友<br>去"发现"搜索添加</p></div>';
+  else{
     friends.forEach(f=>{
-      const isOnline=onlinePeers.has(f.id);
-      const unread=db.messages.filter(m=>m.sender_id===f.id&&m.receiver_id===user.id&&!m.read).length;
-      html+=`<div class="friend-item" data-fid="${f.id}" onclick="openChat(${f.id})"><div class="avatar ${avClass(f.id)}">${(f.nickname||f.username)[0].toUpperCase()}</div><div style="flex:1"><div class="friend-name">${f.nickname||f.username}${unread?'<span class="badge">'+unread+'</span>':''}</div><div class="friend-status ${isOnline?'online':'offline'}">${isOnline?'🟢 在线':'⚫ 离线'}</div></div></div>`;
+      const name=getDisplayName(f);
+      html+=`<div class="friend-item" data-fid="${f.id}" onclick="showProfile(${f.id})"><div class="avatar ${avClass(f.id)}">${name[0]}</div><div style="flex:1"><div class="friend-name">${escHtml(name)}</div><div class="friend-status">${onlinePeers.has(f.id)?'🟢':'⚫'}</div></div></div>`;
     });
   }
   document.getElementById('tabContent').innerHTML=html;
@@ -574,153 +686,243 @@ function renderFriends(){
 function respondReq(id,action){
   const db=loadDB();
   if(action==='accept'){const f=db.friendships.find(x=>x.id===id);if(f)f.status='accepted'}
-  else{db.friendships=db.friendships.filter(x=>x.id!==id)}
-  saveDB(db);renderFriends();broadcastOnline();
+  else db.friendships=db.friendships.filter(x=>x.id!==id);
+  saveDB(db);renderContacts();broadcastOnline();
 }
 
-// ===== 添加好友（支持跨设备搜索） =====
-let currentSearchQuery='';
-let currentSearchRequestId='';
+// ===== 发现 =====
+function renderDiscover(){
+  document.getElementById('tabContent').innerHTML=`
+  <div style="background:#fff">
+    <div class="friend-item" onclick="renderAddFriend()"><div class="avatar" style="background:#07c160;font-size:20px">🔍</div><div style="flex:1"><div class="friend-name">添加好友</div><div class="friend-status">搜索用户名添加好友</div></div></div>
+    <div class="friend-item" onclick="createGroup()"><div class="avatar av-group" style="font-size:20px">👥</div><div style="flex:1"><div class="friend-name">发起群聊</div><div class="friend-status">创建群组聊天</div></div></div>
+    <div class="friend-item" onclick="showFavorites()"><div class="avatar" style="background:#f09b37;font-size:20px">⭐</div><div style="flex:1"><div class="friend-name">收藏</div><div class="friend-status">${favorites.length}条收藏</div></div></div>
+  </div>`;
+}
 
-function renderAdd(){
+// ===== 添加好友 =====
+let searchResultCache={},currentSearchQuery='';
+function renderAddFriend(){
   searchResultCache={};
-  document.getElementById('tabContent').innerHTML=`<div class="search-bar"><input type="text" id="searchInput" placeholder="搜索用户名或昵称..." oninput="searchUsers()"></div><div id="searchResults"><div class="empty" style="padding:30px"><p>输入用户名或昵称搜索</p><p style="font-size:12px;color:#94a3b8;margin-top:8px">在线好友可跨设备搜索</p></div></div>`;
+  document.getElementById('tabContent').innerHTML=`<div style="padding:12px 16px;background:#ededed;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;gap:8px"><button style="background:none;border:none;font-size:20px;cursor:pointer;color:#1e293b" onclick="renderDiscover()">‹</button><input type="text" id="searchInput" placeholder="搜索用户名或昵称..." oninput="searchUsers()" style="flex:1;padding:8px 14px;border:none;border-radius:6px;font-size:14px"></div><div id="searchResults"><div class="empty" style="padding:30px"><p>输入用户名或昵称搜索</p></div></div>`;
 }
 
 function searchUsers(){
   const q=document.getElementById('searchInput').value.trim().toLowerCase();
-  currentSearchQuery=q;
-  if(!q){
-    document.getElementById('searchResults').innerHTML='<div class="empty" style="padding:30px"><p>输入用户名或昵称搜索</p></div>';
-    return;
-  }
-  // 本地搜索
+  currentSearchQuery=q;if(!q){document.getElementById('searchResults').innerHTML='<div class="empty" style="padding:30px"><p>输入用户名或昵称搜索</p></div>';return}
   const db=loadDB();
-  const localResults=db.users.filter(u=>u.id!==user.id&&(u.username.toLowerCase().includes(q)||u.nickname.toLowerCase().includes(q)));
-
-  // 跨设备搜索：向在线好友广播搜索请求
+  const localResults=db.users.filter(u=>u.id!==user.id&&(u.username.toLowerCase().includes(q)||(u.nickname||'').toLowerCase().includes(q)));
   const requestId=Date.now().toString();
-  currentSearchRequestId=requestId;
   searchResultCache[requestId]=[];
-  const broadcastData={type:'search-request',query:q,fromUserId:user.id,requestId:requestId};
-  Object.keys(connections).forEach(fid=>{
-    const conn=connections[fid];
-    if(conn&&conn.open)conn.send(broadcastData);
-  });
-
-  displaySearchResults(localResults,[]);
-  // 2秒后刷新，加入跨设备搜索结果
-  setTimeout(()=>refreshSearchDisplay(),2000);
+  Object.keys(connections).forEach(fid=>{const conn=connections[fid];if(conn&&conn.open)conn.send({type:'search-request',query:q,fromUserId:user.id,requestId})});
+  displaySearchResults(localResults,[]);setTimeout(()=>refreshSearchDisplay(),2000);
 }
-
+function handleSearchRequest(conn,data){
+  const q=data.query.toLowerCase();const db=loadDB();
+  const results=db.users.filter(u=>u.id!==data.fromUserId&&(u.username.toLowerCase().includes(q)||(u.nickname||'').toLowerCase().includes(q))).map(u=>({id:u.id,username:u.username,nickname:u.nickname}));
+  if(results.length&&conn.open)conn.send({type:'search-response',results,query:q,requestId:data.requestId});
+}
+function handleSearchResponse(data){
+  if(!data.results||!data.results.length)return;const db=loadDB();
+  data.results.forEach(u=>{if(!db.users.find(x=>x.id===u.id))db.users.push({id:u.id,username:u.username,nickname:u.nickname,password:'',avatar:'',remark:{}})});
+  db.nextId=Math.max(db.nextId,...data.results.map(u=>u.id+1));saveDB(db);
+  searchResultCache[data.requestId]=data.results;refreshSearchDisplay();
+}
 function refreshSearchDisplay(){
-  if(!currentSearchQuery)return;
-  const db=loadDB();
-  const q=currentSearchQuery;
-  const localResults=db.users.filter(u=>u.id!==user.id&&(u.username.toLowerCase().includes(q)||u.nickname.toLowerCase().includes(q)));
-  const remoteResults=[];
-  Object.values(searchResultCache).forEach(arr=>{arr.forEach(u=>{if(!remoteResults.find(r=>r.id===u.id))remoteResults.push(u)})});
+  if(!currentSearchQuery)return;const db=loadDB();const q=currentSearchQuery;
+  const localResults=db.users.filter(u=>u.id!==user.id&&(u.username.toLowerCase().includes(q)||(u.nickname||'').toLowerCase().includes(q)));
+  const remoteResults=[];Object.values(searchResultCache).forEach(arr=>{arr.forEach(u=>{if(!remoteResults.find(r=>r.id===u.id))remoteResults.push(u)})});
   displaySearchResults(localResults,remoteResults);
 }
-
 function displaySearchResults(localResults,remoteResults){
-  const db=loadDB();
-  const fids=db.friendships.filter(f=>(f.user_id===user.id||f.friend_id===user.id))
-    .map(f=>f.user_id===user.id?f.friend_id:f.user_id);
-
-  let html='';
-  // 本地结果
-  localResults.forEach(u=>{
-    const isFriend=fids.includes(u.id);
-    const isRemote=remoteResults.find(r=>r.id===u.id);
-    html+=`<div class="search-result"><div class="avatar ${avClass(u.id)}" style="width:40px;height:40px;font-size:16px;margin-right:12px">${(u.nickname||u.username)[0].toUpperCase()}</div><div class="info"><div class="name">${u.nickname||u.username}</div><div style="font-size:12px;color:#94a3b8">@${u.username}</div></div>${isFriend?'<span style="color:#10b981;font-size:13px">已添加</span>':`<button class="add-btn" onclick="addFriend(${u.id})">添加</button>`}</div>`;
+  const db=loadDB();const fids=db.friendships.filter(f=>f.user_id===user.id||f.friend_id===user.id).map(f=>f.user_id===user.id?f.friend_id:f.user_id);
+  let html='';const all=[...localResults,...remoteResults.filter(u=>!localResults.find(l=>l.id===u.id))];
+  all.forEach(u=>{const isFriend=fids.includes(u.id);
+    html+=`<div class="search-result"><div class="avatar ${avClass(u.id)}" style="width:40px;height:40px;font-size:16px;margin-right:12px">${(u.nickname||u.username)[0]}</div><div class="info"><div class="name">${escHtml(u.nickname||u.username)}</div><div style="font-size:12px;color:#999">@${u.username}</div></div>${isFriend?'<span style="color:#07c160;font-size:13px">已添加</span>':`<button class="add-btn" onclick="addFriend(${u.id})">添加</button>`}</div>`;
   });
-  // 跨设备结果（排除本地已有的）
-  remoteResults.filter(u=>!localResults.find(l=>l.id===u.id)).forEach(u=>{
-    const isFriend=fids.includes(u.id);
-    html+=`<div class="search-result"><div class="avatar ${avClass(u.id)}" style="width:40px;height:40px;font-size:16px;margin-right:12px">${(u.nickname||u.username)[0].toUpperCase()}</div><div class="info"><div class="name">${u.nickname||u.username}</div><div style="font-size:12px;color:#94a3b8">@${u.username} <span style="color:#3b82f6">🌐</span></div></div>${isFriend?'<span style="color:#10b981;font-size:13px">已添加</span>':`<button class="add-btn" onclick="addFriend(${u.id})">添加</button>`}</div>`;
-  });
-
-  if(!html)html='<div class="empty" style="padding:30px"><p>没找到用户</p><p style="font-size:12px;color:#94a3b8;margin-top:8px">确保对方也在线可搜索更多结果</p></div>';
+  if(!html)html='<div class="empty" style="padding:30px"><p>没找到用户</p></div>';
   document.getElementById('searchResults').innerHTML=html;
 }
-
 function addFriend(fid){
   const db=loadDB();
   if(db.friendships.find(f=>(f.user_id===user.id&&f.friend_id===fid)||(f.user_id===fid&&f.friend_id===user.id)))return;
-  db.friendships.push({id:db.nextId++,user_id:user.id,friend_id:fid,status:'accepted'});
-  saveDB(db);searchUsers();
-  connectToPeer(fid);
-  alert('添加成功！');
+  db.friendships.push({id:db.nextId++,user_id:user.id,friend_id:fid,status:'accepted'});saveDB(db);searchUsers();
+  connectToPeer(fid);alert('添加成功！');
 }
 
-// ===== 我的（含修改密码） =====
+// ===== 群聊 =====
+function createGroup(){
+  const db=loadDB();const fids=db.friendships.filter(f=>(f.user_id===user.id||f.friend_id===user.id)&&f.status==='accepted').map(f=>f.user_id===user.id?f.friend_id:f.user_id);
+  const friends=db.users.filter(u=>fids.includes(u.id));
+  if(friends.length<1){alert('至少需要1个好友才能创建群聊');return}
+  const name=prompt('群聊名称：','群聊');
+  if(!name)return;
+  const members=[user.id,...friends.slice(0,50).map(f=>f.id)];
+  const grp={id:db.nextId++,name,members,owner:user.id,created_at:new Date().toISOString()};
+  if(!db.groups)db.groups=[];db.groups.push(grp);saveDB(db);
+  // 连接到所有群成员
+  members.forEach(mid=>{if(mid!==user.id)connectToPeer(mid)});
+  alert('群聊创建成功！');
+  renderDiscover();
+}
+
+// ===== 我的 =====
 function renderMe(){
+  const db=loadDB();const me=db.users.find(u=>u.id===user.id);
   document.getElementById('tabContent').innerHTML=`
-  <div style="padding:16px">
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;display:flex;align-items:center">
-      <div class="avatar ${avClass(user.id)}" style="width:64px;height:64px;font-size:28px;margin-right:16px">${(user.nickname||user.username)[0].toUpperCase()}</div>
-      <div><div class="friend-name" style="font-size:20px">${user.nickname||user.username}</div><div style="font-size:14px;color:#94a3b8;margin-top:4px">@${user.username}</div></div>
+  <div style="background:#fff">
+    <div class="profile-header" onclick="editMyProfile()">
+      <div class="profile-avatar ${avClass(user.id)}">${(me.nickname||me.username)[0]}</div>
+      <div class="profile-info"><div class="profile-name">${escHtml(me.nickname||me.username)}</div><div class="profile-id">微信号：${me.username}</div></div>
     </div>
-    <div class="settings-section">
-      <h3>🔑 修改密码</h3>
-      <div id="pwdError" class="error"></div>
-      <div id="pwdSuccess" class="success"></div>
-      <input type="password" class="settings-input" id="oldPwd" placeholder="当前密码">
-      <input type="password" class="settings-input" id="newPwd" placeholder="新密码（至少4位）">
-      <input type="password" class="settings-input" id="confirmPwd" placeholder="确认新密码">
-      <button class="btn btn-blue" onclick="changePassword()">修改密码</button>
-    </div>
-    <div class="settings-section">
-      <h3>ℹ️ 关于</h3>
-      <p style="font-size:13px;color:#64748b;line-height:1.8">Friend App v2.0<br>好友实时互动应用<br><br>💡 提示：<br>• 两个用户都需要打开此页面才能实时聊天<br>• 支持语音通话、视频通话、图片发送<br>• 支持跨设备搜索好友<br>• 消息通过 P2P 直接传输<br><br>📱 将此页面添加到主屏幕，可以像原生 App 一样使用！</p>
-    </div>
+  </div>
+  <div style="background:#fff;margin-top:8px">
+    <div class="settings-row" onclick="editMyNickname()"><span class="label">修改昵称</span><span class="value">›</span></div>
+    <div class="settings-row" onclick="changePasswordUI()"><span class="label">修改密码</span><span class="value">›</span></div>
+    <div class="settings-row"><span class="label">收藏</span><span class="value">${favorites.length}条 ›</span></div>
+  </div>
+  <div style="background:#fff;margin-top:8px;padding:16px">
+    <p style="font-size:12px;color:#999;line-height:1.8;text-align:center">Friend App v3.0 · P2P端到端通信</p>
+  </div>
+  <div id="pwdSection" style="display:none;background:#fff;margin-top:8px;padding:16px">
+    <h3 style="font-size:15px;margin-bottom:12px">🔑 修改密码</h3>
+    <div id="pwdError" class="error"></div><div id="pwdSuccess" class="success"></div>
+    <input type="password" class="settings-input" id="oldPwd" placeholder="当前密码">
+    <input type="password" class="settings-input" id="newPwd" placeholder="新密码（至少4位）">
+    <input type="password" class="settings-input" id="confirmPwd" placeholder="确认新密码">
+    <button class="btn btn-green" onclick="changePassword()">确认修改</button>
   </div>`;
 }
 
-// 修改密码
-function changePassword(){
-  const oldPwd=document.getElementById('oldPwd').value;
-  const newPwd=document.getElementById('newPwd').value;
-  const confirmPwd=document.getElementById('confirmPwd').value;
-  const errEl=document.getElementById('pwdError');
-  const okEl=document.getElementById('pwdSuccess');
-  errEl.style.display='none';okEl.style.display='none';
+function changePasswordUI(){const s=document.getElementById('pwdSection');s.style.display=s.style.display==='none'?'block':'none'}
 
+function changePassword(){
+  const oldPwd=document.getElementById('oldPwd').value,newPwd=document.getElementById('newPwd').value,confirmPwd=document.getElementById('confirmPwd').value;
+  const errEl=document.getElementById('pwdError'),okEl=document.getElementById('pwdSuccess');
+  errEl.style.display='none';okEl.style.display='none';
   if(!oldPwd||!newPwd||!confirmPwd){err(errEl,'请填写所有字段');return}
-  const db=loadDB();
-  const u=db.users.find(x=>x.id===user.id);
+  const db=loadDB();const u=db.users.find(x=>x.id===user.id);
   if(!u||u.password!==oldPwd){err(errEl,'当前密码错误');return}
   if(newPwd.length<4){err(errEl,'新密码至少4位');return}
-  if(newPwd!==confirmPwd){err(errEl,'两次输入的新密码不一致');return}
+  if(newPwd!==confirmPwd){err(errEl,'两次输入不一致');return}
   if(newPwd===oldPwd){err(errEl,'新密码不能与旧密码相同');return}
+  u.password=newPwd;saveDB(db);ok(okEl,'密码修改成功！');
+  document.getElementById('oldPwd').value='';document.getElementById('newPwd').value='';document.getElementById('confirmPwd').value='';
+}
 
-  u.password=newPwd;saveDB(db);
-  ok(okEl,'密码修改成功！');
-  document.getElementById('oldPwd').value='';
-  document.getElementById('newPwd').value='';
-  document.getElementById('confirmPwd').value='';
+function editMyNickname(){
+  const db=loadDB();const me=db.users.find(u=>u.id===user.id);
+  const newNick=prompt('修改昵称：',me.nickname||me.username);
+  if(newNick&&newNick.trim()){me.nickname=newNick.trim();saveDB(db);user.nickname=me.nickname;
+    localStorage.setItem('friendAppUser',JSON.stringify(user));
+    // 通知好友
+    Object.keys(connections).forEach(fid=>{const conn=connections[fid];if(conn&&conn.open)conn.send({type:'nickname-update',userId:user.id,nickname:me.nickname})});
+    renderMe();
+  }
+}
+
+function handleNicknameUpdate(data){
+  const db=loadDB();const u=db.users.find(x=>x.id===data.userId);
+  if(u){u.nickname=data.nickname;saveDB(db)}
+}
+
+function editMyProfile(){editMyNickname()}
+
+// ===== 好友详情页 =====
+function showProfile(fid){
+  const db=loadDB();const f=db.users.find(u=>u.id===fid);
+  if(!f)return;
+  const name=getDisplayName(f);
+  const isFriend=db.friendships.some(fr=>(fr.user_id===user.id&&fr.friend_id===fid||fr.user_id===fid&&fr.friend_id===user.id)&&fr.status==='accepted');
+  const me=db.users.find(u=>u.id===user.id);
+  const remark=me&&me.remark&&me.remark[fid]||'';
+
+  document.getElementById('profileContent').innerHTML=`
+  <div class="profile-header">
+    <div class="profile-avatar ${avClass(f.id)}">${(f.nickname||f.username)[0]}</div>
+    <div class="profile-info">
+      <div class="profile-name">${escHtml(name)}</div>
+      <div class="profile-id">微信号：${f.username}</div>
+      ${remark?'<div class="profile-id">备注：'+escHtml(remark)+'</div>':''}
+    </div>
+  </div>
+  <div class="profile-actions">
+    ${isFriend?`
+      <button style="background:#07c160;color:#fff" onclick="openChat('friend-${fid}');closeProfile()">发消息</button>
+      <button style="background:#576b95;color:#fff" onclick="startVoiceCallFromProfile(${fid})">📞 语音</button>
+      <button style="background:#576b95;color:#fff" onclick="startVideoCallFromProfile(${fid})">📹 视频</button>
+    `:`<button style="background:#07c160;color:#fff" onclick="addFriend(${fid})">添加好友</button>`}
+  </div>
+  ${isFriend?`
+  <div style="background:#fff;margin-top:8px">
+    <div class="settings-row" onclick="setRemark(${fid})"><span class="label">设置备注</span><span class="value">${remark?escHtml(remark):'未设置'} ›</span></div>
+    <div class="settings-row" onclick="togglePin('friend-${fid}')"><span class="label">置顶聊天</span><span class="value">${pinnedChats.includes('friend-'+fid)?'已置顶':'未置顶'} ›</span></div>
+    <div class="settings-row" style="color:#f44336" onclick="deleteFriend(${fid})"><span class="label" style="color:#f44336">删除好友</span><span class="value">›</span></div>
+  </div>`:''}`;
+  show('profileScreen');
+}
+
+function closeProfile(){show('mainScreen');switchTab('contacts',document.querySelectorAll('.tab')[1])}
+
+function setRemark(fid){
+  const db=loadDB();const me=db.users.find(u=>u.id===user.id);
+  const cur=me.remark&&me.remark[fid]||'';
+  const r=prompt('设置备注名：',cur);
+  if(r===null)return;
+  if(!me.remark)me.remark={};
+  me.remark[fid]=r.trim();saveDB(db);showProfile(fid);
+}
+
+function deleteFriend(fid){
+  if(!confirm('确定删除好友？'))return;
+  const db=loadDB();
+  db.friendships=db.friendships.filter(f=>!((f.user_id===user.id&&f.friend_id===fid)||(f.user_id===fid&&f.friend_id===user.id)));
+  saveDB(db);
+  if(connections[fid]){connections[fid].close();delete connections[fid]}
+  closeProfile();renderContacts();
+}
+
+function togglePin(chatKey){
+  const idx=pinnedChats.indexOf(chatKey);
+  if(idx>=0)pinnedChats.splice(idx,1);else pinnedChats.push(chatKey);
+  savePinned();
+  const key=chatKey.replace('friend-','').replace('group-','');
+  showProfile(parseInt(key));
 }
 
 // ===== 聊天 =====
-function openChat(fid){
+function openChat(chatKey){
   const db=loadDB();
-  curFriend=db.users.find(u=>u.id===fid);
-  if(!curFriend)return;
-  document.getElementById('chatName').textContent=curFriend.nickname||curFriend.username;
-  const isOnline=onlinePeers.has(fid);
-  document.getElementById('chatStatus').textContent=isOnline?'🟢 在线':'⚫ 离线';
-  document.getElementById('chatStatus').className=isOnline?'online':'offline';
-  show('chatScreen');
-  db.messages.filter(m=>m.sender_id===fid&&m.receiver_id===user.id&&!m.read).forEach(m=>m.read=true);
-  saveDB(db);
-  loadMessages(fid);
+  if(chatKey.startsWith('friend-')){
+    curChatType='friend';
+    const fid=parseInt(chatKey.replace('friend-',''));
+    curChat=db.users.find(u=>u.id===fid);
+    if(!curChat)return;
+    document.getElementById('chatName').textContent=getDisplayName(curChat);
+    document.getElementById('chatStatus').textContent=onlinePeers.has(fid)?'🟢 在线':'⚫ 离线';
+    // 标记已读
+    db.messages.filter(m=>m.sender_id===fid&&m.receiver_id===user.id&&!m.read).forEach(m=>m.read=true);
+  }else{
+    curChatType='group';
+    const gid=parseInt(chatKey.replace('group-',''));
+    curChat=db.groups.find(g=>g.id===gid);
+    if(!curChat)return;
+    document.getElementById('chatName').textContent=curChat.name;
+    document.getElementById('chatStatus').textContent=curChat.members.length+'人';
+    db.messages.filter(m=>m.group_id===gid&&!m.read&&m.sender_id!==user.id).forEach(m=>m.read=true);
+  }
+  saveDB(db);show('chatScreen');
+  loadMessages();
 }
 
-function loadMessages(fid){
-  const db=loadDB();
-  const msgs=db.messages.filter(m=>(m.sender_id===user.id&&m.receiver_id===fid)||(m.sender_id===fid&&m.receiver_id===user.id))
-    .sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+function loadMessages(){
+  const db=loadDB();let msgs;
+  if(curChatType==='friend'){
+    msgs=db.messages.filter(m=>!m.group_id&&((m.sender_id===user.id&&m.receiver_id===curChat.id)||(m.sender_id===curChat.id&&m.receiver_id===user.id)));
+  }else{
+    msgs=db.messages.filter(m=>m.group_id===curChat.id);
+  }
+  msgs.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
   document.getElementById('msgList').innerHTML=msgs.map(m=>msgHTML(m)).join('');
   scrollMsgs();
 }
@@ -728,462 +930,411 @@ function loadMessages(fid){
 function msgHTML(m){
   const isMe=m.sender_id===user.id;
   const t=new Date(m.created_at).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-  const deliveredIcon=isMe?(m.delivered?'✓✓':'✓'):'';
+  const delivered=isMe?(m.delivered?'✓✓':'✓'):'';
 
-  // 图片消息
+  if(m.recalled)return `<div class="msg msg-recalled" id="msg-${m.id}">${isMe?'你':'对方'}撤回了一条消息</div>`;
+
+  // 群聊显示发送者名
+  let senderLabel='';
+  if(curChatType==='group'&&!isMe){
+    const db=loadDB();const u=db.users.find(x=>x.id===m.sender_id);
+    senderLabel=`<div style="font-size:12px;color:#999;margin-bottom:2px">${u?escHtml(u.nickname||u.username):'未知'}</div>`;
+  }
+
+  // 引用
+  let quoteHTML='';
+  if(m.quoteId){
+    const db=loadDB();const qm=db.messages.find(x=>x.id===m.quoteId);
+    if(qm&&!qm.recalled){
+      const qUser=db.users.find(x=>x.id===qm.sender_id);
+      const qText=qm.type==='voice'?'🎤 语音':qm.type==='image'?'📷 图片':qm.type==='location'?'📍 位置':qm.content||'';
+      quoteHTML=`<div class="msg-quote" onclick="scrollMsgTo(${qm.id})">${qUser?escHtml(qUser.nickname||qUser.username):''}: ${escHtml(qText)}</div>`;
+    }
+  }
+
+  // 位置
+  if(m.type==='location'&&m.locationData){
+    return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}" oncontextmenu="showMsgMenu(event,${m.id})" onclick="openMap(${m.id})">${senderLabel}${quoteHTML}<div class="msg-location"><div class="loc-name">${escHtml(m.locationData.name||'位置')}</div><div class="loc-addr">${escHtml(m.locationData.address||'')}</div><div class="loc-map">📍</div></div><div class="msg-time">${t} ${delivered}</div></div>`;
+  }
+
+  // 图片
   if(m.type==='image'&&m.imageData){
-    return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}"><img class="msg-img" src="${m.imageData}" onclick="previewImg('${m.id}')" alt="图片"><div class="msg-time">${t} ${deliveredIcon}</div></div>`;
+    return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}" oncontextmenu="showMsgMenu(event,${m.id})">${senderLabel}${quoteHTML}<img class="msg-img" src="${m.imageData}" onclick="previewImg('${m.id}')" alt="图片"><div class="msg-time">${t} ${delivered}</div></div>`;
   }
 
-  // 语音消息
+  // 语音
   if(m.type==='voice'&&m.voiceData){
-    const dur=m.duration||0;
-    const sec=Math.floor(dur/1000);
-    const mm=Math.floor(sec/60);
-    const ss=sec%60;
+    const dur=m.duration||0,sec=Math.floor(dur/1000),mm=Math.floor(sec/60),ss=sec%60;
     const durStr=mm>0?mm+':'+String(ss).padStart(2,'0'):ss+'"';
-    const bars=Array.from({length:Math.max(8,Math.min(20,sec*2))},(_,i)=>`<span style="animation-delay:${i*0.1}s;height:${4+Math.random()*14}px"></span>`).join('');
-    return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}" onclick="playVoice('${m.id}')" style="cursor:pointer"><div class="voice-msg ${isMe?'voice-msg-me':'voice-msg-them'}"><button class="play-btn" id="play-${m.id}">▶</button><div class="voice-wave">${bars}</div><span class="voice-dur">${durStr}</span></div><div class="msg-time">${t} ${deliveredIcon}</div></div>`;
+    const bars=Array.from({length:Math.max(6,Math.min(16,sec*2))},(_,i)=>`<span style="animation-delay:${i*0.1}s;height:${4+Math.random()*12}px"></span>`).join('');
+    return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}" oncontextmenu="showMsgMenu(event,${m.id})" onclick="playVoice('${m.id}')" style="cursor:pointer">${senderLabel}${quoteHTML}<div class="voice-msg ${isMe?'voice-msg-me':'voice-msg-them'}"><button class="play-btn" id="play-${m.id}">▶</button><div class="voice-wave">${bars}</div><span class="voice-dur">${durStr}</span></div><div class="msg-time">${t} ${delivered}</div></div>`;
   }
 
-  return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}">${m.content}<div class="msg-time">${t} ${deliveredIcon}</div></div>`;
-}
-
-// ===== 图片发送 =====
-function onImagePicked(event){
-  const file=event.target.files[0];
-  if(!file)return;
-  // 重置 input 以便再次选择同一文件
-  event.target.value='';
-
-  // 压缩图片并发送
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const img=new Image();
-    img.onload=function(){
-      const canvas=document.createElement('canvas');
-      const MAX=1200;
-      let w=img.width,h=img.height;
-      if(w>MAX||h>MAX){
-        if(w>h){h=h*MAX/w;w=MAX}else{w=w*MAX/h;h=MAX}
-      }
-      canvas.width=w;canvas.height=h;
-      const ctx=canvas.getContext('2d');
-      ctx.drawImage(img,0,0,w,h);
-      const dataUrl=canvas.toDataURL('image/jpeg',0.7);
-      sendImageMsg(dataUrl);
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function sendImageMsg(imageData){
-  if(!curFriend)return;
-  const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:'📷 图片',type:'image',imageData:imageData,created_at:new Date().toISOString(),read:false,delivered:false};
-
-  const db=loadDB();
-  db.messages.push(msg);saveDB(db);
-
-  const conn=connections[curFriend.id];
-  if(conn&&conn.open){
-    conn.send({type:'message',msg:msg});
-    msg.delivered=true;saveDB(db);
-  }else{
-    queueMessage(msg);
-  }
-
-  document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
-}
-
-// 图片预览
-function previewImg(msgId){
-  const db=loadDB();
-  const msg=db.messages.find(m=>m.id==msgId);
-  if(!msg||!msg.imageData)return;
-  document.getElementById('imgPreviewImg').src=msg.imageData;
-  document.getElementById('imgPreview').classList.add('active');
-}
-
-function closeImgPreview(){
-  document.getElementById('imgPreview').classList.remove('active');
-}
-
-// ===== 语音录制 =====
-let mediaRecorder=null;
-let audioChunks=[];
-let recordingStartTime=0;
-let recordingTimer=null;
-let isRecording=false;
-
-function toggleRecording(){
-  if(isRecording){sendVoiceMsg();return}
-  startRecording();
-}
-
-async function startRecording(){
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    mediaRecorder=new MediaRecorder(stream);
-    audioChunks=[];
-    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data)};
-    mediaRecorder.start();
-    recordingStartTime=Date.now();isRecording=true;
-    document.getElementById('micBtn').style.background='#ef4444';
-    document.getElementById('micBtn').style.color='#fff';
-    document.getElementById('recordingBar').classList.add('active');
-    recordingTimer=setInterval(()=>{
-      const elapsed=Date.now()-recordingStartTime;
-      const s=Math.floor(elapsed/1000);
-      const mm=Math.floor(s/60);const ss=s%60;
-      document.getElementById('recTime').textContent=mm+':'+String(ss).padStart(2,'0');
-    },1000);
-  }catch(e){alert('请允许访问麦克风')}
-}
-
-function cancelRecording(){
-  if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop()}
-  isRecording=false;
-  document.getElementById('micBtn').style.background='#f0f2f5';
-  document.getElementById('micBtn').style.color='#64748b';
-  document.getElementById('recordingBar').classList.remove('active');
-  clearInterval(recordingTimer);
-}
-
-async function sendVoiceMsg(){
-  if(!isRecording||!curFriend)return;
-  const duration=Date.now()-recordingStartTime;
-  if(duration<500){cancelRecording();return}
-
-  mediaRecorder.onstop=async()=>{
-    const blob=new Blob(audioChunks,{type:'audio/webm'});
-    const reader=new FileReader();
-    reader.onload=()=>{
-      const base64=reader.result;
-      const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:'🎤 语音消息',type:'voice',voiceData:base64,duration:duration,created_at:new Date().toISOString(),read:false,delivered:false};
-      const db=loadDB();db.messages.push(msg);saveDB(db);
-      const conn=connections[curFriend.id];
-      if(conn&&conn.open){conn.send({type:'message',msg:msg});msg.delivered=true;saveDB(db)}
-      else{queueMessage(msg)}
-      document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
-    };
-    reader.readAsDataURL(blob);
-    mediaRecorder.stream.getTracks().forEach(t=>t.stop());
-  };
-  mediaRecorder.stop();isRecording=false;
-  document.getElementById('micBtn').style.background='#f0f2f5';
-  document.getElementById('micBtn').style.color='#64748b';
-  document.getElementById('recordingBar').classList.remove('active');
-  clearInterval(recordingTimer);
-}
-
-function playVoice(msgId){
-  const db=loadDB();
-  const msg=db.messages.find(m=>m.id==msgId);
-  if(!msg||!msg.voiceData)return;
-  const audio=new Audio(msg.voiceData);
-  const btn=document.getElementById('play-'+msgId);
-  if(btn)btn.textContent='⏸';
-  audio.play();
-  audio.onended=()=>{if(btn)btn.textContent='▶'};
-  audio.onerror=()=>{if(btn)btn.textContent='▶';alert('播放失败')};
+  // 文本
+  return `<div class="msg ${isMe?'msg-me':'msg-them'}" id="msg-${m.id}" oncontextmenu="showMsgMenu(event,${m.id})">${senderLabel}${quoteHTML}${escHtml(m.content)}<div class="msg-time">${t} ${delivered}</div></div>`;
 }
 
 function scrollMsgs(){const el=document.getElementById('msgList');el.scrollTop=el.scrollHeight}
+function scrollMsgTo(id){const el=document.getElementById('msg-'+id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'})}
 
-function sendMsg(){
+// ===== 正在输入 =====
+let lastTypingTime=0;
+function onMsgInput(){
   const inp=document.getElementById('msgInput');
-  const txt=inp.value.trim();
-  if(!txt||!curFriend)return;
+  document.getElementById('sendBtn').className=inp.value.trim()?'send-btn':'send-btn disabled';
+  if(!curChat||curChatType!=='friend')return;
+  const now=Date.now();if(now-lastTypingTime<2000)return;
+  lastTypingTime=now;
+  const conn=connections[curChat.id];
+  if(conn&&conn.open)conn.send({type:'typing',fromId:user.id});
+}
 
-  const msg={id:Date.now(),sender_id:user.id,receiver_id:curFriend.id,content:txt,created_at:new Date().toISOString(),read:false,delivered:false};
-  const db=loadDB();db.messages.push(msg);saveDB(db);
-  const conn=connections[curFriend.id];
-  if(conn&&conn.open){conn.send({type:'message',msg:msg});msg.delivered=true;saveDB(db)}
-  else{queueMessage(msg)}
-  document.getElementById('msgList').innerHTML+=msgHTML(msg);
-  inp.value='';scrollMsgs();
+// ===== 表情 =====
+function toggleEmoji(){document.getElementById('emojiPicker').classList.toggle('active')}
+(function(){
+  const picker=document.getElementById('emojiPicker');
+  const grid=document.createElement('div');grid.className='emoji-grid';
+  EMOJIS.forEach(e=>{const span=document.createElement('span');span.className='emoji-item';span.textContent=e;span.onclick=()=>{document.getElementById('msgInput').value+=e;onMsgInput()};grid.appendChild(span)});
+  picker.appendChild(grid);
+})();
+
+// ===== 发送消息 =====
+function sendMsg(){
+  const inp=document.getElementById('msgInput');const txt=inp.value.trim();
+  if(!txt||!curChat)return;
+  inp.value='';document.getElementById('sendBtn').className='send-btn disabled';
+
+  if(curChatType==='friend'){
+    const msg={id:Date.now(),sender_id:user.id,receiver_id:curChat.id,content:txt,created_at:new Date().toISOString(),read:false,delivered:false};
+    const db=loadDB();db.messages.push(msg);saveDB(db);
+    const conn=connections[curChat.id];
+    if(conn&&conn.open){conn.send({type:'message',msg});msg.delivered=true;saveDB(db)}else queueMessage(msg);
+    document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
+  }else{
+    // 群聊：发送给所有在线成员
+    const msg={id:Date.now(),sender_id:user.id,group_id:curChat.id,content:txt,created_at:new Date().toISOString(),read:false,delivered:false};
+    const db=loadDB();db.messages.push(msg);saveDB(db);
+    curChat.members.forEach(mid=>{
+      if(mid===user.id)return;
+      const conn=connections[mid];
+      if(conn&&conn.open)conn.send({type:'group-msg',msg,groupId:curChat.id});
+    });
+    document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
+  }
+  document.getElementById('emojiPicker').classList.remove('active');
 }
 
 function receiveMessage(data,isBatch){
-  const msg=data.msg;
-  if(!msg)return;
-  const db=loadDB();
-  if(!db.messages.find(m=>m.id===msg.id)){db.messages.push(msg);saveDB(db)}
-  if(!isBatch){
-    const conn=connections[msg.sender_id];
-    if(conn&&conn.open)conn.send({type:'msg-ack',msgId:msg.id});
-  }
-  if(curFriend&&curFriend.id===msg.sender_id){
-    if(!document.getElementById('msg-'+msg.id)){
-      document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
-    }
+  const msg=data.msg;if(!msg)return;
+  const db=loadDB();if(!db.messages.find(m=>m.id===msg.id)){db.messages.push(msg);saveDB(db)}
+  if(!isBatch){const conn=connections[msg.sender_id];if(conn&&conn.open)conn.send({type:'msg-ack',msgId:msg.id})}
+  if(curChat&&curChatType==='friend'&&curChat.id===msg.sender_id){
+    if(!document.getElementById('msg-'+msg.id)){document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs()}
     msg.read=true;saveDB(db);
-  }else{
-    renderFriends();
   }
 }
 
-function closeChat(){curFriend=null;show('mainScreen');renderFriends()}
-
-// ===== 语音通话（实时） =====
-let ringtoneCtx=null;
-let ringtoneOsc=null;
-let ringtoneInterval=null;
-
-function playRingtone(){
-  try{
-    ringtoneCtx=new(window.AudioContext||window.webkitAudioContext)();
-    function beep(){
-      ringtoneOsc=ringtoneCtx.createOscillator();
-      const gain=ringtoneCtx.createGain();
-      ringtoneOsc.connect(gain);gain.connect(ringtoneCtx.destination);
-      ringtoneOsc.frequency.value=440;ringtoneOsc.type='sine';gain.gain.value=0.3;
-      ringtoneOsc.start();ringtoneOsc.stop(ringtoneCtx.currentTime+0.3);
-    }
-    beep();
-    ringtoneInterval=setInterval(beep,1500);
-  }catch(e){console.log('铃声失败',e)}
+function receiveGroupMsg(data){
+  const msg=data.msg;if(!msg||msg.sender_id===user.id)return;
+  const db=loadDB();if(!db.messages.find(m=>m.id===msg.id)){db.messages.push(msg);saveDB(db)}
+  if(curChat&&curChatType==='group'&&curChat.id===data.groupId){
+    if(!document.getElementById('msg-'+msg.id)){document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs()}
+    msg.read=true;saveDB(db);
+  }
 }
 
-function stopRingtone(){
-  if(ringtoneInterval){clearInterval(ringtoneInterval);ringtoneInterval=null}
-  if(ringtoneOsc){try{ringtoneOsc.stop()}catch(e){}}
-  if(ringtoneCtx){try{ringtoneCtx.close()}catch(e){}}
+// ===== 消息菜单（长按） =====
+let menuMsgId=null;
+function showMsgMenu(e,msgId){
+  e.preventDefault();menuMsgId=msgId;
+  const db=loadDB();const msg=db.messages.find(m=>m.id===msgId);if(!msg)return;
+  const isMe=msg.sender_id===user.id;
+  const canRecall=isMe&&(Date.now()-new Date(msg.created_at).getTime()<120000); // 2分钟内可撤回
+  const items=[];
+  items.push({label:'复制',action:'copyMsg'});
+  if(msg.type!=='voice'&&msg.type!=='recall')items.push({label:'转发',action:'forwardMsg'});
+  items.push({label:'回复',action:'replyMsg'});
+  if(canRecall)items.push({label:'撤回',action:'recallMsg'});
+  items.push({label:'收藏',action:'favMsg'});
+  if(isMe)items.push({label:'删除',action:'deleteMsg'});
+
+  const menu=document.getElementById('msgMenu');
+  menu.innerHTML=items.map(i=>`<div class="msg-menu-item" onclick="${i.action}()">${i.label}</div>`).join('');
+  const rect=e.target.closest('.msg').getBoundingClientRect();
+  let top=rect.top-10,left=rect.left;
+  if(top+items.length*36>window.innerHeight)top=rect.bottom-items.length*36;
+  if(left+100>window.innerWidth)left=window.innerWidth-110;
+  menu.style.top=top+'px';menu.style.left=left+'px';
+  menu.classList.add('active');
+  setTimeout(()=>document.addEventListener('click',closeMsgMenu,{once:true}),10);
 }
+function closeMsgMenu(){document.getElementById('msgMenu').classList.remove('active')}
+
+function copyMsg(){
+  const db=loadDB();const msg=db.messages.find(m=>m.id===menuMsgId);
+  if(msg&&msg.content){navigator.clipboard?navigator.clipboard.writeText(msg.content):prompt('复制:',msg.content)}
+  closeMsgMenu();
+}
+
+function replyMsg(){
+  // 引用回复：将消息ID存入状态，发送时附带
+  window._replyTo=menuMsgId;
+  const db=loadDB();const msg=db.messages.find(m=>m.id===menuMsgId);
+  if(msg){
+    const u=db.users.find(x=>x.id===msg.sender_id);
+    document.getElementById('msgInput').placeholder='回复 '+(u?u.nickname||u.username:'')+': '+((msg.content||'').substring(0,20));
+    document.getElementById('msgInput').focus();
+  }
+  closeMsgMenu();
+}
+
+function recallMsg(){
+  const db=loadDB();const msg=db.messages.find(m=>m.id===menuMsgId);
+  if(!msg||msg.sender_id!==user.id)return;
+  if(Date.now()-new Date(msg.created_at).getTime()>120000){alert('只能撤回2分钟内的消息');closeMsgMenu();return}
+  msg.recalled=true;msg.content='';msg.type='recall';saveDB(db);
+  // 通知对方
+  if(curChatType==='friend'){
+    const conn=connections[curChat.id];
+    if(conn&&conn.open)conn.send({type:'msg-recall',msgId:msg.id,fromId:user.id});
+  }
+  loadMessages();closeMsgMenu();
+}
+
+function handleMsgRecall(data){
+  const db=loadDB();const msg=db.messages.find(m=>m.id===data.msgId);
+  if(msg){msg.recalled=true;msg.content='';msg.type='recall';saveDB(db);if(curChat)loadMessages()}
+}
+
+function deleteMsg(){
+  if(!confirm('删除消息？'))return;
+  const db=loadDB();db.messages=db.messages.filter(m=>m.id!==menuMsgId);saveDB(db);
+  const el=document.getElementById('msg-'+menuMsgId);if(el)el.remove();closeMsgMenu();
+}
+
+function favMsg(){
+  const db=loadDB();const msg=db.messages.find(m=>m.id===menuMsgId);
+  if(msg&&!favorites.find(f=>f.id===msg.id)){
+    favorites.push({...msg,favAt:new Date().toISOString()});saveFav();alert('已收藏');
+  }
+  closeMsgMenu();
+}
+
+function forwardMsg(){
+  closeMsgMenu();
+  const db=loadDB();const fids=db.friendships.filter(f=>(f.user_id===user.id||f.friend_id===user.id)&&f.status==='accepted').map(f=>f.user_id===user.id?f.friend_id:f.user_id);
+  const friends=db.users.filter(u=>fids.includes(u.id));
+  const groups=db.groups.filter(g=>g.members.includes(user.id));
+  let html='<h3>转发给</h3>';
+  groups.forEach(g=>{html+=`<div class="forward-item" onclick="doForward('group',${g.id})"><div class="avatar av-group" style="width:36px;height:36px;font-size:14px;margin-right:10px">👥</div><div>${escHtml(g.name)}</div></div>`});
+  friends.forEach(f=>{html+=`<div class="forward-item" onclick="doForward('friend',${f.id})"><div class="avatar ${avClass(f.id)}" style="width:36px;height:36px;font-size:14px;margin-right:10px">${(f.nickname||f.username)[0]}</div><div>${escHtml(getDisplayName(f))}</div></div>`});
+  document.getElementById('forwardBox').innerHTML=html;
+  document.getElementById('forwardPanel').classList.add('active');
+}
+
+function closeForward(){document.getElementById('forwardPanel').classList.remove('active')}
+
+function doForward(type,id){
+  const db=loadDB();const orig=db.messages.find(m=>m.id===menuMsgId);if(!orig)return;
+  if(type==='friend'){
+    const fwdMsg={id:Date.now(),sender_id:user.id,receiver_id:id,content:'[转发] '+(orig.content||''),type:orig.type,voiceData:orig.voiceData,imageData:orig.imageData,locationData:orig.locationData,duration:orig.duration,created_at:new Date().toISOString(),read:false,delivered:false};
+    db.messages.push(fwdMsg);saveDB(db);
+    const conn=connections[id];if(conn&&conn.open){conn.send({type:'message',msg:fwdMsg});fwdMsg.delivered=true;saveDB(db)}else queueMessage(fwdMsg);
+  }else{
+    const fwdMsg={id:Date.now(),sender_id:user.id,group_id:id,content:'[转发] '+(orig.content||''),type:orig.type,voiceData:orig.voiceData,imageData:orig.imageData,locationData:orig.locationData,duration:orig.duration,created_at:new Date().toISOString(),read:false,delivered:false};
+    db.messages.push(fwdMsg);saveDB(db);
+    const grp=db.groups.find(g=>g.id===id);
+    if(grp)grp.members.forEach(mid=>{if(mid!==user.id){const conn=connections[mid];if(conn&&conn.open)conn.send({type:'group-msg',msg:fwdMsg,groupId:id})}});
+  }
+  closeForward();alert('转发成功');
+}
+
+// ===== 图片 =====
+function onImagePicked(event){
+  const file=event.target.files[0];if(!file)return;event.target.value='';
+  const reader=new FileReader();
+  reader.onload=function(e){const img=new Image();img.onload=function(){
+    const canvas=document.createElement('canvas');const MAX=1200;let w=img.width,h=img.height;
+    if(w>MAX||h>MAX){if(w>h){h=h*MAX/w;w=MAX}else{w=w*MAX/h;h=MAX}}
+    canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+    sendImageMsg(canvas.toDataURL('image/jpeg',0.7));
+  };img.src=e.target.result};reader.readAsDataURL(file);
+}
+
+function sendImageMsg(imageData){
+  if(!curChat)return;
+  const msg={id:Date.now(),sender_id:user.id,content:'📷 图片',type:'image',imageData,created_at:new Date().toISOString(),read:false,delivered:false};
+  if(curChatType==='friend'){msg.receiver_id=curChat.id;const db=loadDB();db.messages.push(msg);saveDB(db);const conn=connections[curChat.id];if(conn&&conn.open){conn.send({type:'message',msg});msg.delivered=true;saveDB(db)}else queueMessage(msg)}
+  else{msg.group_id=curChat.id;const db=loadDB();db.messages.push(msg);saveDB(db);curChat.members.forEach(mid=>{if(mid!==user.id){const conn=connections[mid];if(conn&&conn.open)conn.send({type:'group-msg',msg,groupId:curChat.id})}})}
+  document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();
+}
+
+function previewImg(msgId){const db=loadDB();const msg=db.messages.find(m=>m.id==msgId);if(!msg||!msg.imageData)return;document.getElementById('imgPreviewImg').src=msg.imageData;document.getElementById('imgPreview').classList.add('active')}
+function closeImgPreview(){document.getElementById('imgPreview').classList.remove('active')}
+
+// ===== 位置 =====
+function showLocationPicker(){
+  document.getElementById('locationPicker').classList.add('active');
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      currentLoc={lat:pos.coords.latitude,lng:pos.coords.longitude,name:'我的位置',address:`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`};
+      document.getElementById('locName').textContent=currentLoc.name;
+      document.getElementById('locAddr').textContent=currentLoc.address;
+      document.getElementById('locationMap').innerHTML='<div class="icon">📍</div><p style="color:#07c160;font-weight:500">已获取位置</p>';
+    },()=>{currentLoc={lat:0,lng:0,name:'未知位置',address:'无法获取'};document.getElementById('locName').textContent='获取位置失败';document.getElementById('locationMap').innerHTML='<div class="icon">📍</div><p>无法获取位置</p>'});
+  }
+}
+function closeLocationPicker(){document.getElementById('locationPicker').classList.remove('active')}
+function sendLocation(){
+  if(!curChat||!currentLoc)return;
+  const msg={id:Date.now(),sender_id:user.id,content:'📍 位置',type:'location',locationData:currentLoc,created_at:new Date().toISOString(),read:false,delivered:false};
+  if(curChatType==='friend'){msg.receiver_id=curChat.id;const db=loadDB();db.messages.push(msg);saveDB(db);const conn=connections[curChat.id];if(conn&&conn.open){conn.send({type:'message',msg});msg.delivered=true;saveDB(db)}else queueMessage(msg)}
+  else{msg.group_id=curChat.id;const db=loadDB();db.messages.push(msg);saveDB(db);curChat.members.forEach(mid=>{if(mid!==user.id){const conn=connections[mid];if(conn&&conn.open)conn.send({type:'group-msg',msg,groupId:curChat.id})}})}
+  document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs();closeLocationPicker();
+}
+function openMap(msgId){const db=loadDB();const msg=db.messages.find(m=>m.id==msgId);if(msg&&msg.locationData){window.open(`https://uri.amap.com/marker?position=${msg.locationData.lng},${msg.locationData.lat}&name=${encodeURIComponent(msg.locationData.name)}`,'_blank')}}
+
+// ===== 语音录制 =====
+let mediaRecorder=null,audioChunks=[],recordingStartTime=0,recordingTimer=null,isRecording=false;
+function toggleRecording(){if(isRecording){sendVoiceMsg();return}startRecording()}
+async function startRecording(){
+  try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);audioChunks=[];
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data)};mediaRecorder.start();
+    recordingStartTime=Date.now();isRecording=true;document.getElementById('micBtn').textContent='🔴';
+    document.getElementById('recordingBar').classList.add('active');
+    recordingTimer=setInterval(()=>{const s=Math.floor((Date.now()-recordingStartTime)/1000);document.getElementById('recTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000);
+  }catch(e){alert('请允许访问麦克风')}
+}
+function cancelRecording(){if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();isRecording=false;document.getElementById('micBtn').textContent='🎤';document.getElementById('recordingBar').classList.remove('active');clearInterval(recordingTimer)}
+async function sendVoiceMsg(){
+  if(!isRecording||!curChat)return;const duration=Date.now()-recordingStartTime;if(duration<500){cancelRecording();return}
+  mediaRecorder.onstop=async()=>{const blob=new Blob(audioChunks,{type:'audio/webm'});const reader=new FileReader();
+    reader.onload=()=>{const base64=reader.result;const msg={id:Date.now(),sender_id:user.id,content:'🎤 语音消息',type:'voice',voiceData:base64,duration,created_at:new Date().toISOString(),read:false,delivered:false};
+      if(curChatType==='friend'){msg.receiver_id=curChat.id;const db=loadDB();db.messages.push(msg);saveDB(db);const conn=connections[curChat.id];if(conn&&conn.open){conn.send({type:'message',msg});msg.delivered=true;saveDB(db)}else queueMessage(msg)}
+      else{msg.group_id=curChat.id;const db=loadDB();db.messages.push(msg);saveDB(db);curChat.members.forEach(mid=>{if(mid!==user.id){const conn=connections[mid];if(conn&&conn.open)conn.send({type:'group-msg',msg,groupId:curChat.id})}})}
+      document.getElementById('msgList').innerHTML+=msgHTML(msg);scrollMsgs()};
+    reader.readAsDataURL(blob);mediaRecorder.stream.getTracks().forEach(t=>t.stop())};
+  mediaRecorder.stop();isRecording=false;document.getElementById('micBtn').textContent='🎤';document.getElementById('recordingBar').classList.remove('active');clearInterval(recordingTimer);
+}
+function playVoice(msgId){const db=loadDB();const msg=db.messages.find(m=>m.id==msgId);if(!msg||!msg.voiceData)return;const audio=new Audio(msg.voiceData);const btn=document.getElementById('play-'+msgId);if(btn)btn.textContent='⏸';audio.play();audio.onended=()=>{if(btn)btn.textContent='▶'};audio.onerror=()=>{if(btn)btn.textContent='▶'}}
+
+// ===== 聊天菜单 =====
+function toggleChatMenu(){
+  if(!curChat)return;
+  const items=['搜索聊天记录'];
+  if(curChatType==='friend')items.push(pinnedChats.includes('friend-'+curChat.id)?'取消置顶':'置顶聊天','📞 语音通话','📹 视频通话');
+  const choice=prompt(items.map((s,i)=>(i+1)+'. '+s).join('\n'));
+  if(!choice)return;const idx=parseInt(choice)-1;
+  if(idx===0)searchInChat();
+  else if(idx===1&&curChatType==='friend')togglePin('friend-'+curChat.id);
+  else if(idx===2&&curChatType==='friend')startVoiceCall();
+  else if(idx===3&&curChatType==='friend')startCall();
+}
+
+function searchInChat(){
+  const q=prompt('搜索聊天记录：');if(!q)return;
+  const db=loadDB();let msgs;
+  if(curChatType==='friend')msgs=db.messages.filter(m=>!m.group_id&&((m.sender_id===user.id&&m.receiver_id===curChat.id)||(m.sender_id===curChat.id&&m.receiver_id===user.id))&&m.content&&m.content.includes(q));
+  else msgs=db.messages.filter(m=>m.group_id===curChat.id&&m.content&&m.content.includes(q));
+  if(!msgs.length){alert('未找到');return}
+  scrollMsgTo(msgs[msgs.length-1].id);
+  // 高亮
+  msgs.forEach(m=>{const el=document.getElementById('msg-'+m.id);if(el)el.style.outline='2px solid #07c160'});
+  setTimeout(()=>{msgs.forEach(m=>{const el=document.getElementById('msg-'+m.id);if(el)el.style.outline=''})},3000);
+}
+
+function showFavorites(){
+  let html='';
+  if(!favorites.length){html='<div class="empty"><div class="icon">⭐</div><p>暂无收藏</p></div>'}
+  else{favorites.forEach(f=>{html+=`<div class="friend-item"><div style="flex:1"><div class="friend-name" style="font-size:14px">${escHtml(f.content||f.type)}</div><div class="friend-status">${new Date(f.favAt).toLocaleString('zh-CN')}</div></div></div>`})}
+  document.getElementById('tabContent').innerHTML=`<div style="padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;background:#fff"><button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="renderDiscover()">‹</button><span style="flex:1;text-align:center;font-size:16px;font-weight:500">收藏</span><div style="width:28px"></div></div>${html}`;
+}
+
+function closeChat(){
+  curChat=null;window._replyTo=null;
+  document.getElementById('msgInput').placeholder='输入消息...';
+  document.getElementById('emojiPicker').classList.remove('active');
+  show('mainScreen');renderChats();
+}
+
+// ===== 通话功能 =====
+let ringtoneCtx=null,ringtoneOsc=null,ringtoneInterval=null;
+function playRingtone(){try{ringtoneCtx=new(window.AudioContext||window.webkitAudioContext)();function beep(){ringtoneOsc=ringtoneCtx.createOscillator();const g=ringtoneCtx.createGain();ringtoneOsc.connect(g);g.connect(ringtoneCtx.destination);ringtoneOsc.frequency.value=440;ringtoneOsc.type='sine';g.gain.value=0.3;ringtoneOsc.start();ringtoneOsc.stop(ringtoneCtx.currentTime+0.3)}beep();ringtoneInterval=setInterval(beep,1500)}catch(e){}}
+function stopRingtone(){if(ringtoneInterval){clearInterval(ringtoneInterval);ringtoneInterval=null}if(ringtoneOsc){try{ringtoneOsc.stop()}catch{}}if(ringtoneCtx){try{ringtoneCtx.close()}catch{}}}
 
 async function startVoiceCall(){
-  if(!curFriend)return;
-  if(!myPeer){alert('P2P未连接');return}
-
-  const conn=connections[curFriend.id];
-  if(!conn||!conn.open){alert('对方不在线，无法通话');return}
-
-  try{
-    localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
-  }catch(e){alert('请允许访问麦克风');return}
-
-  // 先通过数据通道通知对方
-  conn.send({type:'voice-call-request',callerName:user.nickname||user.username,callerId:user.id});
-
-  // 显示语音通话界面
+  if(!curChat||curChatType!=='friend')return;if(!myPeer){alert('P2P未连接');return}
+  const conn=connections[curChat.id];if(!conn||!conn.open){alert('对方不在线');return}
+  try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false})}catch{alert('请允许访问麦克风');return}
   currentCallType='voice';
-  document.getElementById('vcAvatar').textContent=(curFriend.nickname||curFriend.username)[0].toUpperCase();
-  document.getElementById('vcAvatar').className='voice-call-avatar ringing av'+((curFriend.id%5)+1);
-  document.getElementById('vcName').textContent=curFriend.nickname||curFriend.username;
-  document.getElementById('vcStatus').textContent='正在呼叫...';
-  document.getElementById('vcDuration').style.display='none';
-  document.getElementById('vMuteBtn').textContent='🎤';
-  document.getElementById('vSpeakerBtn').textContent='🔊';
+  document.getElementById('vcAvatar').textContent=getDisplayName(curChat)[0];document.getElementById('vcAvatar').className='voice-call-avatar ringing '+avClass(curChat.id);
+  document.getElementById('vcName').textContent=getDisplayName(curChat);document.getElementById('vcStatus').textContent='正在呼叫...';document.getElementById('vcDuration').style.display='none';
   show('voiceCallScreen');
-
-  // 通过 PeerJS 发起媒体通话
-  const remotePeerId='friendapp-user-'+curFriend.id;
-  const call=myPeer.call(remotePeerId,localStream,{metadata:{type:'voice',callerId:user.id,callerName:user.nickname||user.username}});
-  currentMediaCall=call;
-
-  call.on('stream',remoteStream=>{
-    console.log('语音通话已接通');
-    // 播放远程音频
-    const audioEl=document.getElementById('remoteAudio')||document.createElement('audio');
-    audioEl.id='remoteAudio';audioEl.autoplay=true;audioEl.playsInline=true;
-    audioEl.srcObject=remoteStream;
-    document.body.appendChild(audioEl);
-    // 更新界面
-    document.getElementById('vcStatus').textContent='通话中';
-    document.getElementById('vcAvatar').classList.remove('ringing');
-    document.getElementById('vcDuration').style.display='block';
-    voiceCallStart=Date.now();
-    voiceCallTimer=setInterval(()=>{
-      const elapsed=Date.now()-voiceCallStart;
-      const s=Math.floor(elapsed/1000);
-      const mm=Math.floor(s/60);const ss=s%60;
-      document.getElementById('vcDuration').textContent=mm+':'+String(ss).padStart(2,'0');
-    },1000);
-  });
-
-  call.on('close',()=>{endVoiceCall()});
-  call.on('error',e=>{console.error('通话错误:',e);endVoiceCall()});
+  const call=myPeer.call('friendapp-user-'+curChat.id,localStream,{metadata:{type:'voice',callerId:user.id}});currentMediaCall=call;
+  call.on('stream',rs=>{const a=document.getElementById('remoteAudio')||document.createElement('audio');a.id='remoteAudio';a.autoplay=true;a.playsInline=true;a.srcObject=rs;document.body.appendChild(a);document.getElementById('vcStatus').textContent='通话中';document.getElementById('vcAvatar').classList.remove('ringing');document.getElementById('vcDuration').style.display='block';voiceCallStart=Date.now();voiceCallTimer=setInterval(()=>{const s=Math.floor((Date.now()-voiceCallStart)/1000);document.getElementById('vcDuration').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000)});
+  call.on('close',endVoiceCall);call.on('error',()=>endVoiceCall());
 }
 
-function handleVoiceCallRequest(conn,data){
-  // 语音通话请求通过数据通道到达（但实际媒体通话通过 PeerJS call 事件处理）
-  // 这里只是保存信息，实际接听在 acceptCallUI 中处理
-  console.log('收到语音通话请求:',data);
-}
+function startVoiceCallFromProfile(fid){closeProfile();curChatType='friend';curChat=loadDB().users.find(u=>u.id===fid);if(curChat)startVoiceCall()}
+function startVideoCallFromProfile(fid){closeProfile();curChatType='friend';curChat=loadDB().users.find(u=>u.id===fid);if(curChat)startCall()}
 
 function acceptCallUI(){
-  stopRingtone();
-  document.getElementById('incomingCall').style.display='none';
-
+  stopRingtone();document.getElementById('incomingCall').classList.remove('active');
   if(window._incomingCall){
-    const{call,callType,callerName}=window._incomingCall;
-    currentCallType=callType;
-    currentMediaCall=call;
-
+    const{call,callType}=window._incomingCall;currentCallType=callType;currentMediaCall=call;
+    const db=loadDB();const ruid=parseInt(call.peer.replace('friendapp-user-',''));const ru=db.users.find(u=>u.id===ruid);const name=ru?getDisplayName(ru):'未知';
     if(callType==='voice'){
-      // 语音通话
-      navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{
-        localStream=stream;
-        call.answer(stream);
-
-        const db=loadDB();
-        const remoteUserId=parseInt(call.peer.replace('friendapp-user-',''));
-        const remoteUser=db.users.find(u=>u.id===remoteUserId);
-        const name=remoteUser?remoteUser.nickname||remoteUser.username:'未知';
-
-        document.getElementById('vcAvatar').textContent=name[0].toUpperCase();
-        document.getElementById('vcAvatar').className='voice-call-avatar av'+((remoteUserId%5)+1);
-        document.getElementById('vcName').textContent=name;
-        document.getElementById('vcStatus').textContent='通话中';
-        document.getElementById('vcDuration').style.display='block';
-        document.getElementById('vMuteBtn').textContent='🎤';
-        document.getElementById('vSpeakerBtn').textContent='🔊';
-        show('voiceCallScreen');
-
-        voiceCallStart=Date.now();
-        voiceCallTimer=setInterval(()=>{
-          const elapsed=Date.now()-voiceCallStart;
-          const s=Math.floor(elapsed/1000);
-          const mm=Math.floor(s/60);const ss=s%60;
-          document.getElementById('vcDuration').textContent=mm+':'+String(ss).padStart(2,'0');
-        },1000);
-
-        call.on('stream',remoteStream=>{
-          const audioEl=document.getElementById('remoteAudio')||document.createElement('audio');
-          audioEl.id='remoteAudio';audioEl.autoplay=true;audioEl.playsInline=true;
-          audioEl.srcObject=remoteStream;document.body.appendChild(audioEl);
-        });
-        call.on('close',()=>endVoiceCall());
-      }).catch(e=>{
-        alert('请允许访问麦克风');
-        call.close();
-      });
+      navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{localStream=stream;call.answer(stream);
+        document.getElementById('vcAvatar').textContent=name[0];document.getElementById('vcAvatar').className='voice-call-avatar '+avClass(ruid);
+        document.getElementById('vcName').textContent=name;document.getElementById('vcStatus').textContent='通话中';document.getElementById('vcDuration').style.display='block';show('voiceCallScreen');
+        voiceCallStart=Date.now();voiceCallTimer=setInterval(()=>{const s=Math.floor((Date.now()-voiceCallStart)/1000);document.getElementById('vcDuration').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000);
+        call.on('stream',rs=>{const a=document.getElementById('remoteAudio')||document.createElement('audio');a.id='remoteAudio';a.autoplay=true;a.playsInline=true;a.srcObject=rs;document.body.appendChild(a)});call.on('close',endVoiceCall)
+      }).catch(()=>call.close());
     }else{
-      // 视频通话
-      navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-        localStream=stream;
-        document.getElementById('localVideo').srcObject=localStream;
-        call.answer(stream);
-        show('videoScreen');
-        call.on('stream',remoteStream=>{
-          document.getElementById('remoteVideo').srcObject=remoteStream;
-        });
-        call.on('close',()=>endCall());
-      }).catch(e=>{
-        alert('请允许访问摄像头和麦克风');
-        call.close();
-      });
+      navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{localStream=stream;document.getElementById('localVideo').srcObject=stream;call.answer(stream);show('videoScreen');call.on('stream',rs=>{document.getElementById('remoteVideo').srcObject=rs});call.on('close',endCall)}).catch(()=>call.close());
     }
-
     window._incomingCall=null;
-  }else if(window._callData){
-    // 旧版兼容
-    navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-      localStream=stream;
-      document.getElementById('localVideo').srcObject=localStream;
-      show('videoScreen');
-    }).catch(e=>alert('请允许访问摄像头'));
   }
 }
 
 function rejectCall(){
-  stopRingtone();
-  document.getElementById('incomingCall').style.display='none';
-  if(window._incomingCall){
-    window._incomingCall.call.close();
-    const conn=connections[window._incomingCall.remoteUserId];
-    if(conn&&conn.open)conn.send({type:'call-reject'});
-    window._incomingCall=null;
-  }
-  if(window._callData){
-    const conn=connections[window._callData.callerId];
-    if(conn&&conn.open)conn.send({type:'call-reject'});
-    window._callData=null;
-  }
+  stopRingtone();document.getElementById('incomingCall').classList.remove('active');
+  if(window._incomingCall){window._incomingCall.call.close();const conn=connections[window._incomingCall.remoteUserId];if(conn&&conn.open)conn.send({type:'call-reject'});window._incomingCall=null}
 }
 
 function endVoiceCall(){
-  if(voiceCallTimer){clearInterval(voiceCallTimer);voiceCallTimer=null}
-  if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}
-  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
-  const audioEl=document.getElementById('remoteAudio');
-  if(audioEl){audioEl.pause();audioEl.srcObject=null;audioEl.remove()}
-  show('mainScreen');renderFriends();
+  if(voiceCallTimer){clearInterval(voiceCallTimer);voiceCallTimer=null}if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
+  const a=document.getElementById('remoteAudio');if(a){a.pause();a.srcObject=null;a.remove()}show('mainScreen');renderChats();
 }
+function toggleVoiceMute(){if(!localStream)return;localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('vMuteBtn').textContent=localStream.getAudioTracks()[0].enabled?'🎤':'🔇'}
+function toggleSpeaker(){isSpeakerOn=!isSpeakerOn;document.getElementById('vSpeakerBtn').textContent=isSpeakerOn?'🔊':'🔈'}
 
-function toggleVoiceMute(){
-  if(!localStream)return;
-  localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);
-  document.getElementById('vMuteBtn').textContent=localStream.getAudioTracks()[0].enabled?'🎤':'🔇';
-}
-
-function toggleSpeaker(){
-  isSpeakerOn=!isSpeakerOn;
-  const audioEl=document.getElementById('remoteAudio');
-  if(audioEl){
-    // 尝试切换扬声器/听筒（iOS 有限支持）
-    try{audioEl.setAttribute('playsinline','');audioEl.volume=isSpeakerOn?1.0:0.5}catch(e){}
-  }
-  document.getElementById('vSpeakerBtn').textContent=isSpeakerOn?'🔊':'🔈';
-}
-
-// ===== 视频通话 =====
 async function startCall(){
-  if(!curFriend)return;
-  if(!myPeer){alert('P2P未连接');return}
-
-  const conn=connections[curFriend.id];
-  if(!conn||!conn.open){alert('对方不在线，无法通话');return}
-
-  try{
-    localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    document.getElementById('localVideo').srcObject=localStream;
-  }catch(e){alert('请允许访问摄像头和麦克风');return}
-
-  show('videoScreen');
-  currentCallType='video';
-
-  // 通过 PeerJS 发起视频通话
-  const remotePeerId='friendapp-user-'+curFriend.id;
-  const call=myPeer.call(remotePeerId,localStream,{metadata:{type:'video',callerId:user.id,callerName:user.nickname||user.username}});
-  currentMediaCall=call;
-
-  call.on('stream',remoteStream=>{
-    document.getElementById('remoteVideo').srcObject=remoteStream;
-  });
-  call.on('close',()=>endCall());
-  call.on('error',e=>{console.error('视频通话错误:',e);endCall()});
-
-  // 兼容旧版通知
+  if(!curChat||curChatType!=='friend')return;if(!myPeer){alert('P2P未连接');return}
+  const conn=connections[curChat.id];if(!conn||!conn.open){alert('对方不在线');return}
+  try{localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});document.getElementById('localVideo').srcObject=localStream}catch{alert('请允许访问摄像头和麦克风');return}
+  show('videoScreen');currentCallType='video';
+  const call=myPeer.call('friendapp-user-'+curChat.id,localStream,{metadata:{type:'video',callerId:user.id}});currentMediaCall=call;
+  call.on('stream',rs=>{document.getElementById('remoteVideo').srcObject=rs});call.on('close',endCall);call.on('error',()=>endCall());
   if(conn&&conn.open)conn.send({type:'call-offer',callerName:user.nickname||user.username,callerId:user.id});
 }
-
-function endCall(){
-  if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}
-  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
-  document.getElementById('localVideo').srcObject=null;
-  document.getElementById('remoteVideo').srcObject=null;
-  show('mainScreen');renderFriends();
-}
-
+function endCall(){if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}document.getElementById('localVideo').srcObject=null;document.getElementById('remoteVideo').srcObject=null;show('mainScreen');renderChats()}
 function toggleMute(){if(localStream){localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('muteBtn').textContent=localStream.getAudioTracks()[0].enabled?'🎤':'🔇'}}
 function toggleCam(){if(localStream){localStream.getVideoTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('camBtn').textContent=localStream.getVideoTracks()[0].enabled?'📷':'🚫'}}
 
 // ===== 合并数据库 =====
-function mergeDB(remoteDB){
-  if(!remoteDB)return;
-  const local=loadDB();
-  remoteDB.users.forEach(u=>{if(!local.users.find(x=>x.id===u.id))local.users.push(u)});
-  remoteDB.friendships.forEach(f=>{if(!local.friendships.find(x=>x.id===f.id))local.friendships.push(f)});
-  remoteDB.messages.forEach(m=>{if(!local.messages.find(x=>x.id===m.id))local.messages.push(m)});
-  local.nextId=Math.max(local.nextId,remoteDB.nextId||1);
-  saveDB(local);
+function mergeDB(r){
+  if(!r)return;const l=loadDB();
+  r.users.forEach(u=>{if(!l.users.find(x=>x.id===u.id))l.users.push(u)});
+  r.friendships.forEach(f=>{if(!l.friendships.find(x=>x.id===f.id))l.friendships.push(f)});
+  r.messages.forEach(m=>{if(!l.messages.find(x=>x.id===m.id))l.messages.push(m)});
+  if(r.groups)r.groups.forEach(g=>{if(!l.groups.find(x=>x.id===g.id))l.groups.push(g)});
+  l.nextId=Math.max(l.nextId,r.nextId||1);saveDB(l);
 }
 
 // ===== 自动登录 =====
 const savedUser=localStorage.getItem('friendAppUser');
-if(savedUser){try{user=JSON.parse(savedUser);enterApp()}catch(e){}}
+if(savedUser){try{user=JSON.parse(savedUser);enterApp()}catch{}}
 </script>
 </body>
 </html>
