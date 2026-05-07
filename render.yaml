@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: friend-app
+    runtime: node
+    repo: https://github.com/52Xie/friend-app
+    branch: main
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
