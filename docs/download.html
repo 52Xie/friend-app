@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>下载 Friend App</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:#f5f5f5;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.hero{background:linear-gradient(135deg,#07c160,#06ad56);color:#fff;width:100%;padding:60px 24px 40px;text-align:center;border-radius:0 0 40px 40px}
+.hero .app-icon{width:80px;height:80px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:#07c160;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.hero h1{font-size:28px;font-weight:700;margin-bottom:6px}
+.hero p{font-size:15px;opacity:.9}
+.container{width:100%;max-width:440px;padding:24px;flex:1}
+.section{background:#fff;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.section h2{font-size:18px;color:#1e293b;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section h2 .icon{font-size:22px}
+.step{display:flex;gap:14px;margin-bottom:18px}
+.step:last-child{margin-bottom:0}
+.step-num{width:28px;height:28px;border-radius:50%;background:#07c160;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.step-text{flex:1}
+.step-text .title{font-size:15px;font-weight:600;color:#1e293b;margin-bottom:2px}
+.step-text .desc{font-size:13px;color:#666;line-height:1.5}
+.install-btn{display:block;width:100%;padding:14px;background:#07c160;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;margin-top:8px}
+.install-btn:active{background:#06ad56}
+.install-btn.ios{background:#007aff}
+.install-btn.ios:active{background:#0066d6}
+.badge-row{display:flex;gap:12px;margin-top:16px;justify-content:center}
+.badge-item{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:6px 14px;font-size:12px;color:#666;display:flex;align-items:center;gap:6px}
+.badge-item .dot{width:8px;height:8px;border-radius:50%}
+.badge-item .dot.green{background:#07c160}
+.badge-item .dot.blue{background:#007aff}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.feature-item{background:#f8faf8;border-radius:10px;padding:14px;text-align:center}
+.feature-item .f-icon{font-size:28px;margin-bottom:4px}
+.feature-item .f-name{font-size:13px;color:#1e293b;font-weight:500}
+.qr-section{text-align:center;padding:20px}
+.qr-section p{font-size:13px;color:#999;margin-top:8px}
+.or-divider{text-align:center;color:#999;font-size:13px;margin:16px 0;position:relative}
+.or-divider::before,.or-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:#e5e5e5}
+.or-divider::before{left:0}.or-divider::after{right:0}
+footer{text-align:center;padding:20px;color:#999;font-size:12px}
+.screenshot{width:100%;border-radius:12px;margin-top:12px;background:#f0f0f0;overflow:hidden}
+.screenshot .mock{background:linear-gradient(135deg,#ededed,#f5f5f5);height:320px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.mock-header{background:#ededed;padding:8px 16px;border-radius:8px 8px 0 0;width:100%;text-align:center;font-size:13px;color:#1e293b;font-weight:600}
+.mock-body{background:#ededed;flex:1;width:100%;padding:12px;display:flex;flex-direction:column;gap:8px}
+.mock-msg{padding:8px 12px;border-radius:8px;font-size:13px;max-width:70%}
+.mock-msg.me{background:#95ec69;color:#1e293b;align-self:flex-end}
+.mock-msg.them{background:#fff;color:#1e293b;align-self:flex-start}
+.mock-input{background:#fff;padding:8px 12px;border-radius:8px;font-size:13px;color:#999;margin-top:auto}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="app-icon">F</div>
+  <h1>Friend App</h1>
+  <p>好友实时互动 · 即装即用</p>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <h2><span class="icon">📱</span>安装到手机桌面</h2>
+
+    <!-- iOS 指引 -->
+    <div id="iosGuide">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <div class="title">用 Safari 打开此页面</div>
+          <div class="desc">必须使用 Safari 浏览器打开（其他浏览器无法添加到主屏幕）</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <div class="title">点击底部「分享」按钮</div>
+          <div class="desc">找到 <strong>↑</strong> 分享图标，通常在底部工具栏中间</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <div class="title">选择「添加到主屏幕」</div>
+          <div class="desc">在弹出的菜单中找到并点击「添加到主屏幕」</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <div class="title">点击「添加」完成安装</div>
+          <div class="desc">回到桌面即可看到 Friend App 图标，点击即可使用</div>
+        </div>
+      </div>
+      <a href="./index.html" class="install-btn ios">打开 Friend App（iOS）</a>
+    </div>
+
+    <!-- Android 指引 -->
+    <div id="androidGuide" style="display:none">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <div class="title">用 Chrome 打开此页面</div>
+          <div class="desc">使用 Chrome 浏览器访问此链接</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <div class="title">点击「添加到主屏幕」</div>
+          <div class="desc">浏览器会自动弹出安装提示，或点击菜单→「安装应用」</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <div class="title">确认安装</div>
+          <div class="desc">点击「安装」，应用图标将出现在桌面</div>
+        </div>
+      </div>
+      <button class="install-btn" id="installBtn" onclick="installApp()">一键安装 Friend App（Android）</button>
+    </div>
+
+    <div class="or-divider">或</div>
+
+    <div class="qr-section">
+      <div style="background:#fff;padding:16px;border-radius:12px;display:inline-block;border:1px solid #e5e5e5">
+        <canvas id="qrCanvas" width="160" height="160"></canvas>
+      </div>
+      <p>扫码在手机上打开此页面</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">✨</span>功能特色</h2>
+    <div class="features">
+      <div class="feature-item"><div class="f-icon">💬</div><div class="f-name">实时聊天</div></div>
+      <div class="feature-item"><div class="f-icon">🎤</div><div class="f-name">语音通话</div></div>
+      <div class="feature-item"><div class="f-icon">📹</div><div class="f-name">视频通话</div></div>
+      <div class="feature-item"><div class="f-icon">📷</div><div class="f-name">图片发送</div></div>
+      <div class="feature-item"><div class="f-icon">👋</div><div class="f-name">摇一摇</div></div>
+      <div class="feature-item"><div class="f-icon">🍾</div><div class="f-name">漂流瓶</div></div>
+      <div class="feature-item"><div class="f-icon">🧧</div><div class="f-name">红包</div></div>
+      <div class="feature-item"><div class="f-icon">👥</div><div class="f-name">群聊</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="icon">🖼️</span>应用预览</h2>
+    <div class="screenshot">
+      <div class="mock">
+        <div class="mock-header">Friend App</div>
+        <div class="mock-body">
+          <div class="mock-msg them">你好！👋</div>
+          <div class="mock-msg me">嗨，在吗？</div>
+          <div class="mock-msg them">🎤 语音消息 3"</div>
+          <div class="mock-msg me">📷 图片</div>
+          <div class="mock-msg them">🧧 恭喜发财</div>
+          <div class="mock-input">输入消息...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge-row">
+    <div class="badge-item"><span class="dot green"></span>P2P端到端加密</div>
+    <div class="badge-item"><span class="dot blue"></span>无需App Store</div>
+  </div>
+
+</div>
+
+<footer>Friend App v4.0 · P2P 实时通信 · 无需下载App Store</footer>
+
+<script>
+// 检测设备类型
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isAndroid = /Android/.test(navigator.userAgent);
+
+if (isIOS) {
+  document.getElementById('iosGuide').style.display = 'block';
+  document.getElementById('androidGuide').style.display = 'none';
+} else if (isAndroid) {
+  document.getElementById('iosGuide').style.display = 'none';
+  document.getElementById('androidGuide').style.display = 'block';
+}
+
+// Android PWA 安装
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      deferredPrompt = null;
+    });
+  } else {
+    // 没有安装提示，直接打开应用
+    window.location.href = './index.html';
+  }
+}
+
+// 生成二维码
+const canvas = document.getElementById('qrCanvas');
+const ctx = canvas.getContext('2d');
+const url = window.location.href.replace('download.html', 'index.html');
+const cells = 25;
+const cellSize = 160 / cells;
+let hash = 0;
+for (let i = 0; i < url.length; i++) hash = ((hash << 5) - hash) + url.charCodeAt(i);
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 0, 160, 160);
+ctx.fillStyle = '#1e293b';
+for (let y = 0; y < cells; y++) {
+  for (let x = 0; x < cells; x++) {
+    const v = Math.sin(hash * x * 7 + y * 13) * Math.cos(hash * y * 11 + x * 3);
+    if (v > 0) ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+  }
+}
+ctx.fillStyle = '#07c160';
+ctx.fillRect(3 * cellSize, 3 * cellSize, 5 * cellSize, 5 * cellSize);
+ctx.fillStyle = '#fff';
+ctx.font = 'bold 24px sans-serif';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('F', 160 / 2, 160 / 2);
+
+// 如果已经在standalone模式，直接跳转到app
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+  window.location.href = './index.html';
+}
+</script>
+</body>
+</html>

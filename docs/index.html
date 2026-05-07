@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Friend App">
+<link rel="manifest" href="manifest.json">
 <title>Friend App</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -408,32 +409,8 @@ function initPeer(){
   myPeer.on('error',e=>{if(e.type==='unavailable-id'){myPeer.destroy();myPeer=null;setTimeout(()=>initPeer(),2000)}});
   myPeer.on('disconnected',()=>{document.getElementById('connDot').className='conn-dot conn-off';setTimeout(()=>{if(myPeer)myPeer.reconnect()},3000)});
 }
-function handleDataConnection(conn){
-  const ruid=parseInt(conn.peer.replace('friendapp-user-',''));connections[ruid]=conn;onlinePeers.add(ruid);
-  conn.on('data',data=>{
-    switch(data.type){
-      case 'online':onlinePeers.add(data.userId);updateStatus();deliverPendingMessages(data.userId);const db=loadDB();conn.send({type:'db-sync',db});break;
-      case 'message':receiveMessage(data);break;
-      case 'db-sync':mergeDB(data.db);break;
-      case 'messages-batch':(data.messages||[]).forEach(m=>receiveMessage({msg:m},true));break;
-      case 'msg-ack':{const d2=loadDB();const m=d2.messages.find(x=>x.id===data.msgId);if(m){m.delivered=true;saveDB(d2)}break}
-      case 'msg-read':{const d3=loadDB();d3.messages.filter(m=>m.sender_id===user.id&&m.receiver_id===data.fromId&&!m.readByReceiver).forEach(m=>m.readByReceiver=true);saveDB(d3);if(curChat&&curChatType==='friend'&&curChat.id===data.fromId)loadMessages();break}
-      case 'search-request':handleSearchRequest(conn,data);break;
-      case 'search-response':handleSearchResponse(data);break;
-      case 'call-reject':showToast('对方拒绝了通话');break;
-      case 'call-offer':document.getElementById('callerName').textContent=data.callerName||'未知';document.getElementById('callTypeLabel').textContent='📹 视频通话邀请';document.getElementById('incomingCall').classList.add('active');window._callData=data;playRingtone();break;
-      case 'typing':if(curChat&&curChat.id===data.fromId&&curChatType==='friend'){document.getElementById('typingIndicator').textContent='对方正在输入...';clearTimeout(window._tt);window._tt=setTimeout(()=>{document.getElementById('typingIndicator').textContent=''},3000)}break;
-      case 'msg-recall':{const d4=loadDB();const m=d4.messages.find(x=>x.id===data.msgId);if(m){m.recalled=true;m.content='';m.type='recall';saveDB(d4);if(curChat)loadMessages()}break}
-      case 'group-msg':receiveGroupMsg(data);break;
-      case 'nickname-update':{const d5=loadDB();const u=d5.users.find(x=>x.id===data.userId);if(u){u.nickname=data.nickname;saveDB(d5)}break}
-      case 'nudge':showToast(data.fromName+' 拍了拍你');if(curChat&&curChat.id===data.fromId&&curChatType==='friend'){const d6=loadDB();const nm={id:Date.now(),sender_id:data.fromId,receiver_id:user.id,type:'nudge',content:'拍了拍你',created_at:new Date().toISOString()};d6.messages.push(nm);saveDB(d6);loadMessages()}break;
-      case 'redpacket-claim':{const d7=loadDB();const rp=d7.messages.find(m=>m.id===data.rpId);if(rp&&rp.rpData){if(!rp.rpData.claimed)rp.rpData.claimed=[];if(!rp.rpData.claimed.find(c=>c.userId===data.claimId)){rp.rpData.claimed.push({userId:data.claimId,amount:data.amount});saveDB(d7);if(curChat)loadMessages()}}break}
-    }
-  });
-  conn.on('close',()=>{delete connections[ruid];onlinePeers.delete(ruid);updateStatus()});
-  conn.on('error',e=>console.error(e));
-  if(curChat&&curChat.id===ruid&&curChatType==='friend')document.getElementById('chatStatus').textContent='🟢 在线';
-}
+// handleDataConnection 在文件末尾重新定义（支持漂流瓶等新数据类型）
+function handleDataConnection(conn){/* placeholder - overridden below */}
 function broadcastOnline(){const db=loadDB();db.friendships.filter(f=>(f.user_id===user.id||f.friend_id===user.id)&&f.status==='accepted').map(f=>f.user_id===user.id?f.friend_id:f.user_id).forEach(fid=>connectToPeer(fid))}
 function connectToPeer(fid){if(connections[fid])return;try{const conn=myPeer.connect('friendapp-user-'+fid,{reliable:true});conn.on('open',()=>{connections[fid]=conn;onlinePeers.add(fid);conn.send({type:'online',userId:user.id,nickname:user.nickname});updateStatus();deliverPendingMessages(fid)});handleDataConnection(conn)}catch(e){}}
 const PENDING_KEY='friendAppPending';
@@ -493,7 +470,22 @@ function renderContacts(){
 function respondReq(id,action){const db=loadDB();if(action==='accept'){const f=db.friendships.find(x=>x.id===id);if(f)f.status='accepted'}else db.friendships=db.friendships.filter(x=>x.id!==id);saveDB(db);renderContacts();broadcastOnline()}
 
 // ===== Discover =====
-function renderDiscover(){document.getElementById('tabContent').innerHTML=`<div style="background:#fff"><div class="friend-item" onclick="renderAddFriend()"><div class="avatar" style="background:#07c160;font-size:20px">🔍</div><div style="flex:1"><div class="friend-name">添加好友</div></div></div><div class="friend-item" onclick="createGroup()"><div class="avatar av-group" style="font-size:20px">👥</div><div style="flex:1"><div class="friend-name">发起群聊</div></div></div><div class="friend-item" onclick="showFavorites()"><div class="avatar" style="background:#f09b37;font-size:20px">⭐</div><div style="flex:1"><div class="friend-name">收藏</div><div style="font-size:12px;color:#999">${favorites.length}条</div></div></div></div>`}
+function renderDiscover(){
+  const db=loadDB();
+  const bottleCount=(JSON.parse(localStorage.getItem('friendAppBottles'))||[]).length;
+  document.getElementById('tabContent').innerHTML=`<div style="background:#fff">
+    <div class="friend-item" onclick="renderAddFriend()"><div class="avatar" style="background:#07c160;font-size:20px">🔍</div><div style="flex:1"><div class="friend-name">添加好友</div></div></div>
+    <div class="friend-item" onclick="createGroup()"><div class="avatar av-group" style="font-size:20px">👥</div><div style="flex:1"><div class="friend-name">发起群聊</div></div></div>
+  </div>
+  <div style="background:#fff;margin-top:8px">
+    <div class="friend-item" onclick="startShake()"><div class="avatar" style="background:linear-gradient(135deg,#3b82f6,#6366f1);font-size:20px">👋</div><div style="flex:1"><div class="friend-name">摇一摇</div><div style="font-size:12px;color:#999">摇动手机，随机匹配好友</div></div></div>
+    <div class="friend-item" onclick="openDriftBottle()"><div class="avatar" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);font-size:20px">🍾</div><div style="flex:1"><div class="friend-name">漂流瓶</div><div style="font-size:12px;color:#999">扔一个瓶子，等待有缘人</div></div></div>
+  </div>
+  <div style="background:#fff;margin-top:8px">
+    <div class="friend-item" onclick="showFavorites()"><div class="avatar" style="background:#f09b37;font-size:20px">⭐</div><div style="flex:1"><div class="friend-name">收藏</div><div style="font-size:12px;color:#999">${favorites.length}条</div></div></div>
+    <div class="friend-item" onclick="showNearby()"><div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);font-size:20px">📍</div><div style="flex:1"><div class="friend-name">附近的人</div><div style="font-size:12px;color:#999">${onlinePeers.size}人在线</div></div></div>
+  </div>`;
+}
 
 // ===== Search =====
 function renderAddFriend(){searchResultCache={};document.getElementById('tabContent').innerHTML=`<div style="padding:12px 16px;background:#ededed;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;gap:8px"><button style="background:none;border:none;font-size:20px;cursor:pointer;color:#1e293b" onclick="renderDiscover()">‹</button><input type="text" id="searchInput" placeholder="搜索用户名或昵称..." oninput="searchUsers()" style="flex:1;padding:8px 14px;border:none;border-radius:6px;font-size:14px"></div><div id="searchResults"><div class="empty" style="padding:30px"><p>输入用户名或昵称搜索</p></div></div>`}
@@ -693,6 +685,197 @@ function toggleMute(){if(localStream){localStream.getAudioTracks().forEach(t=>t.
 function toggleCam(){if(localStream){localStream.getVideoTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('camBtn').textContent=localStream.getVideoTracks()[0].enabled?'📷':'🚫'}}
 
 function mergeDB(r){if(!r)return;const l=loadDB();r.users.forEach(u=>{if(!l.users.find(x=>x.id===u.id))l.users.push(u)});r.friendships.forEach(f=>{if(!l.friendships.find(x=>x.id===f.id))l.friendships.push(f)});r.messages.forEach(m=>{if(!l.messages.find(x=>x.id===m.id))l.messages.push(m)});if(r.groups)r.groups.forEach(g=>{if(!l.groups.find(x=>x.id===g.id))l.groups.push(g)});l.nextId=Math.max(l.nextId,r.nextId||1);saveDB(l)}
+// ===== 摇一摇 =====
+let shakeListener=null,shakeCount=0,shakeTimer=null,isShaking=false;
+function startShake(){
+  isShaking=true;shakeCount=0;
+  const overlay=document.createElement('div');
+  overlay.id='shakeOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:linear-gradient(180deg,#1e293b,#0f172a);color:#fff;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center';
+  overlay.innerHTML=`<button onclick="closeShake()" style="position:absolute;top:16px;left:16px;background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
+    <div id="shakePhone" style="font-size:80px;transition:transform .3s">📱</div>
+    <p style="margin-top:16px;font-size:16px" id="shakeText">摇动手机或点击屏幕</p>
+    <div style="margin-top:20px;width:200px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden"><div id="shakeProgress" style="width:0%;height:100%;background:#07c160;border-radius:3px;transition:width .3s"></div></div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',onShakeClick);
+  // DeviceMotion
+  if(window.DeviceMotionEvent){
+    try{
+      if(typeof DeviceMotionEvent.requestPermission==='function'){
+        DeviceMotionEvent.requestPermission().then(s=>{if(s==='granted')addShakeListener()}).catch(()=>{})
+      }else{addShakeListener()}
+    }catch(e){}
+  }
+}
+function addShakeListener(){
+  let lastX=0,lastY=0,lastZ=0;
+  shakeListener=function(e){
+    const a=e.accelerationIncludingGravity;if(!a)return;
+    const dx=a.x-lastX,dy=a.y-lastY,dz=a.z-lastZ;
+    lastX=a.x;lastY=a.y;lastZ=a.z;
+    const speed=Math.sqrt(dx*dx+dy*dy+dz*dz);
+    if(speed>20)onShakeDetected();
+  };
+  window.addEventListener('devicemotion',shakeListener);
+}
+function onShakeClick(){onShakeDetected()}
+function onShakeDetected(){
+  if(!isShaking)return;
+  shakeCount++;
+  const p=Math.min(100,shakeCount*20);
+  document.getElementById('shakeProgress').style.width=p+'%';
+  const phone=document.getElementById('shakePhone');
+  phone.style.transform='rotate('+(Math.random()*40-20)+'deg)';
+  setTimeout(()=>{phone.style.transform='rotate('+(Math.random()*20-10)+'deg)'},200);
+  if(shakeCount>=5){
+    isShaking=false;
+    document.getElementById('shakeText').textContent='🔍 匹配中...';
+    setTimeout(()=>shakeMatch(),800);
+  }
+}
+function shakeMatch(){
+  const db=loadDB();
+  const onlineIds=Array.from(onlinePeers).filter(id=>id!==user.id);
+  let match;
+  if(onlineIds.length){match=db.users.find(u=>onlineIds.includes(u.id))}
+  else{const others=db.users.filter(u=>u.id!==user.id);match=others[Math.floor(Math.random()*others.length)]}
+  if(!match){document.getElementById('shakeText').textContent='未找到用户，稍后再试';return}
+  const name=match.nickname||match.username;
+  document.getElementById('shakeText').textContent='找到了！';
+  document.getElementById('shakePhone').style.fontSize='40px';
+  document.getElementById('shakePhone').textContent='🎉';
+  const ov=document.getElementById('shakeOverlay');
+  ov.innerHTML=`<button onclick="closeShake()" style="position:absolute;top:16px;left:16px;background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:60px;margin-bottom:16px">🎉</div>
+    <div class="avatar ${avClass(match.id)}" style="width:80px;height:80px;font-size:32px;margin-bottom:12px">${name[0]}</div>
+    <h2 style="font-size:20px;margin-bottom:4px">${esc(name)}</h2>
+    <p style="color:#94a3b8;margin-bottom:24px">@${match.username}</p>
+    <div style="display:flex;gap:12px">
+      <button onclick="greetFromShake(${match.id})" style="background:#07c160;color:#fff;border:none;padding:12px 32px;border-radius:24px;font-size:16px;cursor:pointer">👋 打招呼</button>
+      <button onclick="addFriendFromShake(${match.id})" style="background:#576b95;color:#fff;border:none;padding:12px 32px;border-radius:24px;font-size:16px;cursor:pointer">➕ 加好友</button>
+    </div>`;
+}
+function greetFromShake(fid){closeShake();openChat('friend-'+fid);setTimeout(()=>{const inp=document.getElementById('msgInput');inp.value='👋 你好！摇一摇匹配到了你';sendMsg()},300)}
+function addFriendFromShake(fid){addFriend(fid);closeShake()}
+function closeShake(){isShaking=false;if(shakeListener)window.removeEventListener('devicemotion',shakeListener);const o=document.getElementById('shakeOverlay');if(o)o.remove();renderDiscover()}
+
+// ===== 漂流瓶 =====
+const BOTTLE_KEY='friendAppBottles';
+function getBottles(){try{return JSON.parse(localStorage.getItem(BOTTLE_KEY))||[]}catch{return[]}}
+function saveBottles(b){localStorage.setItem(BOTTLE_KEY,JSON.stringify(b))}
+function openDriftBottle(){
+  const overlay=document.createElement('div');
+  overlay.id='bottleOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:linear-gradient(180deg,#0c4a6e,#0f172a);color:#fff;z-index:100;display:flex;flex-direction:column';
+  overlay.innerHTML=`<div style="padding:16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <button onclick="closeBottle()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer">✕</button>
+    <span style="font-size:17px;font-weight:600">漂流瓶</span>
+    <div style="width:28px"></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px" id="bottleMain">
+    <div style="font-size:80px;margin-bottom:20px;animation:bottleFloat 3s ease-in-out infinite">🍾</div>
+    <style>@keyframes bottleFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-15px) rotate(5deg)}}</style>
+    <p style="font-size:16px;margin-bottom:30px;color:#94a3b8">大海茫茫，遇见有缘人</p>
+    <div style="display:flex;gap:16px">
+      <button onclick="throwBottle()" style="background:#07c160;color:#fff;border:none;padding:14px 28px;border-radius:24px;font-size:16px;cursor:pointer;font-weight:600">🍾 扔瓶子</button>
+      <button onclick="pickBottle()" style="background:rgba(255,255,255,.15);color:#fff;border:none;padding:14px 28px;border-radius:24px;font-size:16px;cursor:pointer;font-weight:600">🫳 捡瓶子</button>
+    </div>
+    <p style="margin-top:16px;font-size:12px;color:#64748b">在线 ${onlinePeers.size} 人 · 海中有 ${getBottles().length} 个瓶子</p>
+  </div>`;
+  document.body.appendChild(overlay);
+  // 请求别人的瓶子
+  Object.keys(connections).forEach(fid=>{const c=connections[fid];if(c&&c.open)c.send({type:'bottle-sync-request',fromId:user.id})});
+}
+function closeBottle(){const o=document.getElementById('bottleOverlay');if(o)o.remove();renderDiscover()}
+
+function throwBottle(){
+  const msg=prompt('写点什么，扔进大海...');if(!msg||!msg.trim())return;
+  const bottle={id:Date.now(),userId:user.id,username:user.username,nickname:user.nickname||user.username,content:msg.trim(),createdAt:new Date().toISOString(),claimed:false};
+  const bottles=getBottles();bottles.push(bottle);saveBottles(bottles);
+  // 通过P2P分享瓶子
+  Object.keys(connections).forEach(fid=>{const c=connections[fid];if(c&&c.open)c.send({type:'bottle-new',bottle})});
+  showToast('瓶子已扔进大海 🌊');
+  const main=document.getElementById('bottleMain');if(main)main.innerHTML=`<div style="font-size:60px;margin-bottom:16px">🌊</div><p style="font-size:16px;margin-bottom:24px">瓶子已扔出，等待有缘人捡到</p><button onclick="closeBottle()" style="background:rgba(255,255,255,.15);color:#fff;border:none;padding:12px 28px;border-radius:24px;font-size:15px;cursor:pointer">返回</button>`;
+}
+
+function pickBottle(){
+  const bottles=getBottles().filter(b=>b.userId!==user.id&&!b.claimed);
+  if(!bottles.length){showToast('海里暂无瓶子，稍后再来');return}
+  const bottle=bottles[Math.floor(Math.random()*bottles.length)];
+  bottle.claimed=true;saveBottles(getBottles().map(b=>b.id===bottle.id?bottle:b));
+  const main=document.getElementById('bottleMain');
+  if(main)main.innerHTML=`<div style="font-size:60px;margin-bottom:16px">🍾</div>
+    <div style="background:rgba(255,255,255,.1);border-radius:16px;padding:20px;width:100%;margin-bottom:20px">
+      <div style="display:flex;align-items:center;margin-bottom:12px">
+        <div class="avatar ${avClass(bottle.userId)}" style="width:36px;height:36px;font-size:14px;margin-right:10px">${(bottle.nickname||'?')[0]}</div>
+        <div><div style="font-size:14px;font-weight:600">${esc(bottle.nickname)}</div><div style="font-size:11px;color:#64748b">${new Date(bottle.createdAt).toLocaleDateString('zh-CN')}</div></div>
+      </div>
+      <p style="font-size:16px;line-height:1.6">${esc(bottle.content)}</p>
+    </div>
+    <div style="display:flex;gap:12px">
+      <button onclick="replyBottle(${bottle.userId})" style="background:#07c160;color:#fff;border:none;padding:12px 24px;border-radius:24px;font-size:15px;cursor:pointer;font-weight:600">💬 回复</button>
+      <button onclick="pickBottle()" style="background:rgba(255,255,255,.15);color:#fff;border:none;padding:12px 24px;border-radius:24px;font-size:15px;cursor:pointer">🍾 再捡一个</button>
+    </div>`;
+}
+
+function replyBottle(userId){
+  closeBottle();
+  const db=loadDB();
+  const isFriend=db.friendships.some(f=>(f.user_id===user.id&&f.friend_id===userId||f.user_id===userId&&f.friend_id===user.id)&&f.status==='accepted');
+  if(!isFriend){db.friendships.push({id:db.nextId++,user_id:user.id,friend_id:userId,status:'accepted'});saveDB(db);connectToPeer(userId)}
+  openChat('friend-'+userId);
+  setTimeout(()=>{document.getElementById('msgInput').value='🍾 漂流瓶回复：';onMsgInput()},300);
+}
+
+// ===== 附近的人 =====
+function showNearby(){
+  const db=loadDB();
+  const online=db.users.filter(u=>u.id!==user.id&&onlinePeers.has(u.id));
+  const offline=db.users.filter(u=>u.id!==user.id&&!onlinePeers.has(u.id));
+  let html=`<div style="padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;background:#fff"><button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="renderDiscover()">‹</button><span style="flex:1;text-align:center;font-size:16px;font-weight:500">附近的人</span><div style="width:28px"></div></div>`;
+  if(online.length){html+='<div style="padding:8px 16px;color:#07c160;font-size:12px">🟢 在线</div>';online.forEach(u=>{html+=`<div class="friend-item" onclick="showProfile(${u.id})"><div class="avatar ${avClass(u.id)}">${(u.nickname||u.username)[0]}</div><div style="flex:1"><div class="friend-name">${esc(u.nickname||u.username)}</div><div style="font-size:12px;color:#999">@${u.username}</div></div></div>`})}
+  if(offline.length){html+='<div style="padding:8px 16px;color:#999;font-size:12px">⚫ 离线</div>';offline.forEach(u=>{html+=`<div class="friend-item" onclick="showProfile(${u.id})"><div class="avatar ${avClass(u.id)}" style="opacity:.5">${(u.nickname||u.username)[0]}</div><div style="flex:1"><div class="friend-name" style="color:#999">${esc(u.nickname||u.username)}</div></div></div>`})}
+  if(!online.length&&!offline.length)html+='<div class="empty"><div class="icon">📍</div><p>附近暂无用户</p></div>';
+  document.getElementById('tabContent').innerHTML=html;
+}
+
+// ===== P2P 数据类型扩展 =====
+// 在 handleDataConnection 中补充漂流瓶相关
+const _origHandleDC=handleDataConnection;
+handleDataConnection=function(conn){
+  const ruid=parseInt(conn.peer.replace('friendapp-user-',''));
+  connections[ruid]=conn;onlinePeers.add(ruid);
+  conn.on('data',data=>{
+    switch(data.type){
+      case 'online':onlinePeers.add(data.userId);updateStatus();deliverPendingMessages(data.userId);const db=loadDB();conn.send({type:'db-sync',db});break;
+      case 'message':receiveMessage(data);break;
+      case 'db-sync':mergeDB(data.db);break;
+      case 'messages-batch':(data.messages||[]).forEach(m=>receiveMessage({msg:m},true));break;
+      case 'msg-ack':{const d2=loadDB();const m=d2.messages.find(x=>x.id===data.msgId);if(m){m.delivered=true;saveDB(d2)}break}
+      case 'msg-read':{const d3=loadDB();d3.messages.filter(m=>m.sender_id===user.id&&m.receiver_id===data.fromId&&!m.readByReceiver).forEach(m=>m.readByReceiver=true);saveDB(d3);if(curChat&&curChatType==='friend'&&curChat.id===data.fromId)loadMessages();break}
+      case 'search-request':handleSearchRequest(conn,data);break;
+      case 'search-response':handleSearchResponse(data);break;
+      case 'call-reject':showToast('对方拒绝了通话');break;
+      case 'call-offer':document.getElementById('callerName').textContent=data.callerName||'未知';document.getElementById('callTypeLabel').textContent='📹 视频通话邀请';document.getElementById('incomingCall').classList.add('active');window._callData=data;playRingtone();break;
+      case 'typing':if(curChat&&curChat.id===data.fromId&&curChatType==='friend'){document.getElementById('typingIndicator').textContent='对方正在输入...';clearTimeout(window._tt);window._tt=setTimeout(()=>{document.getElementById('typingIndicator').textContent=''},3000)}break;
+      case 'msg-recall':{const d4=loadDB();const m=d4.messages.find(x=>x.id===data.msgId);if(m){m.recalled=true;m.content='';m.type='recall';saveDB(d4);if(curChat)loadMessages()}break}
+      case 'group-msg':receiveGroupMsg(data);break;
+      case 'nickname-update':{const d5=loadDB();const u=d5.users.find(x=>x.id===data.userId);if(u){u.nickname=data.nickname;saveDB(d5)}break}
+      case 'nudge':showToast(data.fromName+' 拍了拍你');if(curChat&&curChat.id===data.fromId&&curChatType==='friend'){const d6=loadDB();const nm={id:Date.now(),sender_id:data.fromId,receiver_id:user.id,type:'nudge',content:'拍了拍你',created_at:new Date().toISOString()};d6.messages.push(nm);saveDB(d6);loadMessages()}break;
+      case 'redpacket-claim':{const d7=loadDB();const rp=d7.messages.find(m=>m.id===data.rpId);if(rp&&rp.rpData){if(!rp.rpData.claimed)rp.rpData.claimed=[];if(!rp.rpData.claimed.find(c=>c.userId===data.claimId)){rp.rpData.claimed.push({userId:data.claimId,amount:data.amount});saveDB(d7);if(curChat)loadMessages()}}break}
+      case 'bottle-sync-request':{const myBottles=getBottles().filter(b=>b.userId===user.id);if(myBottles.length&&conn.open)conn.send({type:'bottle-sync-response',bottles:myBottles});break}
+      case 'bottle-sync-response':{const existing=getBottles();data.bottles.forEach(b=>{if(!existing.find(e=>e.id===b.id)){existing.push(b)}});saveBottles(existing);break}
+      case 'bottle-new':{const existing=getBottles();if(!existing.find(e=>e.id===data.bottle.id)){existing.push(data.bottle);saveBottles(existing)}break}
+    }
+  });
+  conn.on('close',()=>{delete connections[ruid];onlinePeers.delete(ruid);updateStatus()});
+  conn.on('error',e=>console.error(e));
+  if(curChat&&curChat.id===ruid&&curChatType==='friend')document.getElementById('chatStatus').textContent='🟢 在线';
+};
+
+// ===== Service Worker =====
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW注册失败',e))}
+
 const savedUser=localStorage.getItem('friendAppUser');if(savedUser){try{user=JSON.parse(savedUser);enterApp()}catch{}}
 </script>
 </body>
