@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Friend App">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text y='.9em' font-size='90' x='center' text-anchor='middle' fill='white'>F</text></svg>">
+    <title>Friend App</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: #f0f2f5; }
+      
+      .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #2563eb, #7c3aed); padding: 20px; }
+      .login-box { background: white; border-radius: 20px; padding: 40px 30px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+      .login-box h1 { text-align: center; font-size: 28px; color: #1f2937; margin-bottom: 5px; }
+      .login-box p { text-align: center; color: #9ca3af; margin-bottom: 30px; }
+      .login-box input { width: 100%; padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; margin-bottom: 12px; outline: none; transition: border-color 0.2s; }
+      .login-box input:focus { border-color: #2563eb; }
+      .login-box button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-bottom: 10px; }
+      .btn-primary { background: #2563eb; color: white; }
+      .btn-primary:hover { background: #1d4ed8; }
+      .btn-secondary { background: #f3f4f6; color: #374151; }
+      .btn-secondary:hover { background: #e5e7eb; }
+      .error-msg { background: #fef2f2; color: #dc2626; padding: 10px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 12px; }
+      .switch-link { text-align: center; margin-top: 16px; color: #6b7280; font-size: 14px; }
+      .switch-link a { color: #2563eb; text-decoration: none; font-weight: 600; }
+      
+      .app-screen { height: 100vh; display: flex; flex-direction: column; max-width: 500px; margin: 0 auto; background: white; display: none; }
+      .app-header { background: #2563eb; color: white; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+      .app-header h2 { font-size: 18px; }
+      .app-body { flex: 1; overflow-y: auto; }
+      .friend-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid #f3f4f6; cursor: pointer; }
+      .friend-item:hover { background: #f9fafb; }
+      .friend-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; margin-right: 14px; }
+      .friend-name { font-weight: 500; color: #1f2937; }
+      .chat-area { flex: 1; display: flex; flex-direction: column; }
+      .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #f9fafb; }
+      .msg-bubble { max-width: 70%; padding: 10px 16px; border-radius: 18px; margin-bottom: 10px; font-size: 15px; }
+      .msg-me { background: #2563eb; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
+      .msg-them { background: white; color: #1f2937; margin-right: auto; border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+      .chat-input-area { padding: 12px 16px; background: white; border-top: 1px solid #e5e7eb; display: flex; gap: 10px; }
+      .chat-input-area input { flex: 1; padding: 10px 16px; border: 2px solid #e5e7eb; border-radius: 24px; outline: none; }
+      .chat-input-area button { background: #2563eb; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 18px; cursor: pointer; }
+      
+      @media (display-mode: standalone) {
+        .login-screen { display: none !important; }
+        .app-screen { display: flex !important; }
+      }
+    </style>
+</head>
+<body>
+  <!-- 登录界面 -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h1>Friend App</h1>
+      <p>好友实时互动</p>
+      <div id="errorMsg" class="error-msg" style="display:none"></div>
+      <input type="text" id="username" placeholder="用户名" autocomplete="username">
+      <input type="password" id="password" placeholder="密码" autocomplete="current-password">
+      <button class="btn-primary" onclick="doLogin()">登录</button>
+      <div class="switch-link">没有账号？ <a href="#" onclick="showRegister()">立即注册</a></div>
+    </div>
+  </div>
+
+  <!-- 注册界面 -->
+  <div class="login-screen" id="registerScreen" style="display:none">
+    <div class="login-box">
+      <h1>创建账号</h1>
+      <p>加入 Friend App</p>
+      <div id="regErrorMsg" class="error-msg" style="display:none"></div>
+      <input type="text" id="regUsername" placeholder="用户名" autocomplete="username">
+      <input type="text" id="regNickname" placeholder="昵称（可选）" autocomplete="nickname">
+      <input type="password" id="regPassword" placeholder="密码" autocomplete="new-password">
+      <button class="btn-primary" onclick="doRegister()">注册</button>
+      <div class="switch-link">已有账号？ <a href="#" onclick="showLogin()">去登录</a></div>
+    </div>
+  </div>
+
+  <!-- 主应用界面 -->
+  <div class="app-screen" id="appScreen">
+    <div class="app-header">
+      <h2 id="headerTitle">Friend App</h2>
+      <button onclick="doLogout()" style="background:none;border:none;color:white;font-size:14px;cursor:pointer">退出</button>
+    </div>
+    <div class="app-body" id="appBody">
+      <p style="text-align:center;color:#9ca3af;margin-top:40px">选择一个好友开始聊天</p>
+    </div>
+  </div>
+
+  <script>
+    const API = '${window.location.origin}/api';
+    let token = localStorage.getItem('token');
+    let currentUser = null;
+    let currentFriend = null;
+
+    // 检查登录状态
+    if (token) {
+      checkAuth();
+    }
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (res.ok) {
+          currentUser = await res.json();
+          showApp();
+        } else {
+          logout();
+        }
+      } catch (e) { logout(); }
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('token', token);
+        showApp();
+      } else {
+        showError(document.getElementById('errorMsg'), data.error);
+      }
+    }
+
+    async function doRegister() {
+      const username = document.getElementById('regUsername').value;
+      const nickname = document.getElementById('regNickname').value;
+      const password = document.getElementById('regPassword').value;
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, nickname })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('token', token);
+        showApp();
+      } else {
+        showError(document.getElementById('regErrorMsg'), data.error);
+      }
+    }
+
+    function showLogin() { document.getElementById('registerScreen').style.display = 'none'; document.getElementById('loginScreen').style.display = 'flex'; }
+    function showRegister() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('registerScreen').style.display = 'flex'; }
+    
+    function showApp() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('registerScreen').style.display = 'none';
+      document.getElementById('appScreen').style.display = 'flex';
+      document.getElementById('headerTitle').textContent = currentUser.nickname || currentUser.username;
+      loadFriends();
+    }
+
+    function doLogout() {
+      logout();
+    }
+
+    function logout() {
+      token = null;
+      currentUser = null;
+      localStorage.removeItem('token');
+      document.getElementById('appScreen').style.display = 'none';
+      showLogin();
+    }
+
+    function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+    async function loadFriends() {
+      // 简化版：直接显示提示
+      document.getElementById('appBody').innerHTML = '<p style="text-align:center;color:#9ca3af;margin-top:40px">功能演示版<br>请部署到公网后使用完整功能</p>';
+    }
+
+    // PWA 安装提示
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // 可以显示一个安装按钮
+    });
+  </script>
+</body>
+</html>
