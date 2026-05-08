@@ -6,5 +6,11 @@
     "toUserId": 17,
     "toUsername": "Xiez",
     "createdAt": "2026-05-08T05:47:23.729Z"
+  },
+  {
+    "fromUsername": "Xiez",
+    "fromNickname": "002",
+    "toUsername": "alice",
+    "createdAt": "2026-05-08T05:56:22.568Z"
   }
 ]
