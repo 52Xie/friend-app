@@ -309,7 +309,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <div class="title"><h3 id="chatName"></h3><p id="chatStatus"></p></div>
 <button class="more-btn" onclick="toggleChatMenu()">⋯</button>
 <button class="call-btn call-btn-voice" id="chatVoiceCallBtn" onclick="startVoiceCall()">📞</button>
-<button class="call-btn call-btn-video" id="chatVideoCallBtn" onclick="startCall()">📹</button>
+<button class="call-btn call-btn-video" id="chatVideoCallBtn" onclick="startVideoCall()">📹</button>
 </div>
 <div class="typing-indicator" id="typingIndicator"></div>
 <div class="messages" id="msgList"></div>
@@ -423,7 +423,7 @@ function initPeer(){
   if(myPeer)return;
   myPeer=new Peer('friendapp-user-'+user.id,{debug:0,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
   myPeer.on('open',()=>{document.getElementById('connDot').className='conn-dot conn-on';broadcastOnline();setTimeout(()=>{deliverAllPending();discoverOnlinePeers()},2000)});
-  myPeer.on('call',call=>{const ruid=parseInt(call.peer.replace('friendapp-user-',''));const db=loadDB();const ru=db.users.find(u=>u.id===ruid);const name=ru?getDisplayName(ru):'未知';const ct=call.metadata&&call.metadata.type||'voice';document.getElementById('callerName').textContent=name;document.getElementById('callerAv').textContent=name[0];document.getElementById('callTypeLabel').textContent=ct==='video'?'📹 视频通话邀请':'📞 语音通话邀请';document.getElementById('incomingCall').classList.add('active');window._incomingCall={call,callType:ct,remoteUserId:ruid};playRingtone()});
+  myPeer.on('call',call=>{const ruid=parseInt(call.peer.replace('friendapp-user-',''));const db=loadDB();const ru=db.users.find(u=>u.id===ruid);const name=ru?getDisplayName(ru):'未知';const ct=call.metadata&&call.metadata.type||'voice';window._incomingCall={call,callType:ct,remoteUserId:ruid};showIncomingCall(name,call,ct)});
   myPeer.on('connection',conn=>handleDataConnection(conn));
   myPeer.on('error',e=>{if(e.type==='unavailable-id'){myPeer.destroy();myPeer=null;setTimeout(()=>initPeer(),2000)}});
   myPeer.on('disconnected',()=>{document.getElementById('connDot').className='conn-dot conn-off';setTimeout(()=>{if(myPeer)myPeer.reconnect()},3000)});
@@ -689,7 +689,7 @@ async function sendVoiceMsg(){if(!isRecording||!curChat)return;const duration=Da
 function playVoice(msgId){const db=loadDB();const msg=db.messages.find(m=>m.id==msgId);if(!msg||!msg.voiceData)return;const btn=document.getElementById('play-'+msgId);if(btn)btn.textContent='⏸';try{const audio=new Audio();audio.src=msg.voiceData;audio.setAttribute('playsinline','');audio.setAttribute('webkit-playsinline','');const playPromise=audio.play();if(playPromise&&playPromise.catch){playPromise.catch(e=>{console.log('Voice play failed, retrying...',e);audio.muted=true;audio.play().then(()=>{audio.muted=false}).catch(()=>{});if(btn)btn.textContent='▶'})}audio.onended=()=>{if(btn)btn.textContent='▶'};audio.onerror=()=>{if(btn)btn.textContent='▶'}}catch(e){if(btn)btn.textContent='▶';showToast('无法播放语音')}}
 
 // ===== Chat Menu =====
-function toggleChatMenu(){if(!curChat)return;const items=['搜索聊天记录',pinnedChats.includes((curChatType==='friend'?'friend-':'group-')+curChat.id)?'取消置顶':'置顶聊天',mutedChats.includes((curChatType==='friend'?'friend-':'group-')+curChat.id)?'关闭免打扰':'消息免打扰','多选消息'];if(curChatType==='friend')items.push('📞 语音通话','📹 视频通话');if(curChatType==='group')items.push('群聊设置');const choice=prompt(items.map((s,i)=>(i+1)+'. '+s).join('\n'));if(!choice)return;const idx=parseInt(choice)-1;const ck=(curChatType==='friend'?'friend-':'group-')+curChat.id;if(idx===0)searchInChat();else if(idx===1)togglePin(ck);else if(idx===2)toggleMute(ck);else if(idx===3)enterMultiSelect();else if(idx===4&&curChatType==='friend')startVoiceCall();else if(idx===5&&curChatType==='friend')startCall();else if((idx===4&&curChatType==='group')||(idx===5&&curChatType==='group'))showGroupSettings()}
+function toggleChatMenu(){if(!curChat)return;const items=['搜索聊天记录',pinnedChats.includes((curChatType==='friend'?'friend-':'group-')+curChat.id)?'取消置顶':'置顶聊天',mutedChats.includes((curChatType==='friend'?'friend-':'group-')+curChat.id)?'关闭免打扰':'消息免打扰','多选消息'];if(curChatType==='friend')items.push('📞 语音通话','📹 视频通话');if(curChatType==='group')items.push('群聊设置');const choice=prompt(items.map((s,i)=>(i+1)+'. '+s).join('\n'));if(!choice)return;const idx=parseInt(choice)-1;const ck=(curChatType==='friend'?'friend-':'group-')+curChat.id;if(idx===0)searchInChat();else if(idx===1)togglePin(ck);else if(idx===2)toggleMute(ck);else if(idx===3)enterMultiSelect();else if(idx===4&&curChatType==='friend')startVoiceCall();else if(idx===5&&curChatType==='friend')startVideoCall();else if((idx===4&&curChatType==='group')||(idx===5&&curChatType==='group'))showGroupSettings()}
 function searchInChat(){const q=prompt('搜索聊天记录：');if(!q)return;const db=loadDB();let msgs;msgs=curChatType==='friend'?db.messages.filter(m=>!m.group_id&&((m.sender_id===user.id&&m.receiver_id===curChat.id)||(m.sender_id===curChat.id&&m.receiver_id===user.id))&&m.content&&m.content.includes(q)):db.messages.filter(m=>m.group_id===curChat.id&&m.content&&m.content.includes(q));if(!msgs.length){showToast('未找到');return}scrollMsgTo(msgs[msgs.length-1].id);msgs.forEach(m=>{const el=document.getElementById('msg-'+m.id);if(el)el.style.outline='2px solid #07c160'});setTimeout(()=>{msgs.forEach(m=>{const el=document.getElementById('msg-'+m.id);if(el)el.style.outline=''})},3000)}
 function showFavorites(){let html='';if(!favorites.length)html='<div class="empty"><div class="icon">⭐</div><p>暂无收藏</p></div>';else favorites.forEach(f=>{html+=`<div class="friend-item"><div style="flex:1"><div class="friend-name" style="font-size:14px">${esc(f.content||f.type)}</div><div style="font-size:12px;color:#999">${new Date(f.favAt||f.created_at).toLocaleString('zh-CN')}</div></div></div>`});document.getElementById('tabContent').innerHTML=`<div style="padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;background:#fff"><button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="renderDiscover()">‹</button><span style="flex:1;text-align:center;font-size:16px;font-weight:500">收藏</span><div style="width:28px"></div></div>${html}`}
 
@@ -702,22 +702,101 @@ function closeChat(){curChat=null;window._replyTo=null;multiSelectMode=false;sel
 
 // ===== Call =====
 let ringtoneCtx=null,ringtoneOsc=null,ringtoneInterval=null;
-function playRingtone(){try{ringtoneCtx=new(window.AudioContext||window.webkitAudioContext)();if(ringtoneCtx.state==='suspended')ringtoneCtx.resume();function beep(){try{ringtoneOsc=ringtoneCtx.createOscillator();const g=ringtoneCtx.createGain();ringtoneOsc.connect(g);g.connect(ringtoneCtx.destination);ringtoneOsc.frequency.value=440;ringtoneOsc.type='sine';g.gain.value=0.3;ringtoneOsc.start();ringtoneOsc.stop(ringtoneCtx.currentTime+0.3)}catch(e){}}beep();ringtoneInterval=setInterval(beep,1500)}catch(e){console.log('Ringtone failed:',e)}}
-function stopRingtone(){if(ringtoneInterval){clearInterval(ringtoneInterval);ringtoneInterval=null}if(ringtoneOsc){try{ringtoneOsc.stop()}catch{}}if(ringtoneCtx){try{ringtoneCtx.close()}catch{}}}
-async function startVoiceCall(){if(!curChat||curChatType!=='friend')return;if(!myPeer){showToast('P2P未连接');return}if(!connections[curChat.id]||!connections[curChat.id].open)connectToPeer(curChat.id);try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false})}catch(e){showToast('请允许访问麦克风');return}currentCallType='voice';document.getElementById('vcAvatar').textContent=getDisplayName(curChat)[0];document.getElementById('vcAvatar').className='voice-call-avatar ringing '+avClass(curChat.id);document.getElementById('vcName').textContent=getDisplayName(curChat);document.getElementById('vcStatus').textContent='正在呼叫...';document.getElementById('vcDuration').style.display='none';show('voiceCallScreen');setupRemoteAudio();const call=myPeer.call('friendapp-user-'+curChat.id,localStream,{metadata:{type:'voice',callerId:user.id}});currentMediaCall=call;call.on('stream',rs=>{attachRemoteStream(rs);document.getElementById('vcStatus').textContent='通话中';document.getElementById('vcAvatar').classList.remove('ringing');document.getElementById('vcDuration').style.display='block';voiceCallStart=Date.now();voiceCallTimer=setInterval(()=>{const s=Math.floor((Date.now()-voiceCallStart)/1000);document.getElementById('vcDuration').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000)});call.on('close',endVoiceCall);call.on('error',e=>{console.log('Voice call error:',e);endVoiceCall()});const c=connections[curChat.id];if(c&&c.open)c.send({type:'call-offer',callerName:user.nickname||user.username,callerId:user.id,callType:'voice'})}
+function playRingtone(){try{ringtoneCtx=new(window.AudioContext||window.webkitAudioContext)();if(ringtoneCtx.state==='suspended')ringtoneCtx.resume();function beep(){try{if(!ringtoneCtx||ringtoneCtx.state==='closed')return;ringtoneOsc=ringtoneCtx.createOscillator();const g=ringtoneCtx.createGain();ringtoneOsc.connect(g);g.connect(ringtoneCtx.destination);ringtoneOsc.frequency.value=440;ringtoneOsc.type='sine';g.gain.value=0.3;ringtoneOsc.start();ringtoneOsc.stop(ringtoneCtx.currentTime+0.3)}catch(e){}}beep();ringtoneInterval=setInterval(beep,1500)}catch(e){}}
+function stopRingtone(){if(ringtoneInterval){clearInterval(ringtoneInterval);ringtoneInterval=null}if(ringtoneOsc){try{ringtoneOsc.stop()}catch(e){}}if(ringtoneCtx){try{ringtoneCtx.close()}catch(e){}}}
+function showIncomingCall(name,callObj,callType){document.getElementById('callerName').textContent=name;document.getElementById('callerAv').textContent=name[0];document.getElementById('callTypeLabel').textContent=callType==='video'?'📹 视频通话邀请':'📞 语音通话邀请';if(!window._incomingCall)window._incomingCall={call:callObj,callType:callType,remoteUserId:0};document.getElementById('incomingCall').classList.add('active');playRingtone()}
+
+async function startVoiceCall(){
+  if(!curChat||curChatType!=='friend')return;
+  if(!myPeer||!myPeer.open){showToast('网络未连接，请稍后重试');return}
+  try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false})}catch(e){showToast('请允许访问麦克风');return}
+  currentCallType='voice';setupRemoteAudio();
+  document.getElementById('vcAvatar').textContent=getDisplayName(curChat)[0];
+  document.getElementById('vcAvatar').className='voice-call-avatar ringing '+avClass(curChat.id);
+  document.getElementById('vcName').textContent=getDisplayName(curChat);
+  document.getElementById('vcStatus').textContent='正在呼叫...';
+  document.getElementById('vcDuration').style.display='none';
+  show('voiceCallScreen');
+  const call=myPeer.call('friendapp-user-'+curChat.id,localStream,{metadata:{type:'voice',callerId:user.id}});
+  if(!call){showToast('呼叫失败');endVoiceCall();return}
+  currentMediaCall=call;
+  call.on('stream',rs=>{attachRemoteStream(rs);document.getElementById('vcStatus').textContent='通话中';document.getElementById('vcAvatar').classList.remove('ringing');document.getElementById('vcDuration').style.display='block';voiceCallStart=Date.now();voiceCallTimer=setInterval(()=>{const s=Math.floor((Date.now()-voiceCallStart)/1000);document.getElementById('vcDuration').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000)});
+  call.on('close',()=>{if(currentMediaCall===call)endVoiceCall()});
+  call.on('error',()=>{if(currentMediaCall===call)endVoiceCall()});
+  const c=connections[curChat.id];if(c&&c.open)c.send({type:'call-offer',callerName:user.nickname||user.username,callerId:user.id,callType:'voice'});
+  setTimeout(()=>{if(!voiceCallStart)document.getElementById('vcStatus').textContent='等待对方接听...'},5000);
+}
 function startVoiceCallFromProfile(fid){closeProfile();curChatType='friend';curChat=loadDB().users.find(u=>u.id===fid);if(curChat)startVoiceCall()}
-function startVideoCallFromProfile(fid){closeProfile();curChatType='friend';curChat=loadDB().users.find(u=>u.id===fid);if(curChat)startCall()}
-function acceptCallUI(){stopRingtone();document.getElementById('incomingCall').classList.remove('active');const ic=window._incomingCall;if(!ic){showToast('通话已结束');return}const{call,callType}=ic;currentCallType=callType;currentMediaCall=call;const db=loadDB();const ruid=parseInt(call.peer.replace('friendapp-user-',''));const ru=db.users.find(u=>u.id===ruid);const name=ru?getDisplayName(ru):'未知';window._incomingCall=null;if(callType==='voice'){navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{localStream=stream;setupRemoteAudio();call.answer(stream);document.getElementById('vcAvatar').textContent=name[0];document.getElementById('vcAvatar').className='voice-call-avatar '+avClass(ruid);document.getElementById('vcName').textContent=name;document.getElementById('vcStatus').textContent='已接通';document.getElementById('vcDuration').style.display='block';show('voiceCallScreen');voiceCallStart=Date.now();voiceCallTimer=setInterval(()=>{const s=Math.floor((Date.now()-voiceCallStart)/1000);document.getElementById('vcDuration').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000);call.on('stream',rs=>{attachRemoteStream(rs);document.getElementById('vcStatus').textContent='通话中'});call.on('close',endVoiceCall);call.on('error',e=>{console.log('Voice call error:',e);endVoiceCall()})}).catch(e=>{showToast('无法访问麦克风: '+e.message);call.close()})}else{navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:true}).then(stream=>{localStream=stream;document.getElementById('localVideo').srcObject=stream;document.getElementById('localVideo').muted=true;document.getElementById('localVideo').play().catch(()=>{});call.answer(stream);show('videoScreen');call.on('stream',rs=>{document.getElementById('remoteVideo').srcObject=rs;document.getElementById('remoteVideo').play().catch(e=>{console.log('Remote play retry...');setTimeout(()=>{document.getElementById('remoteVideo').play().catch(()=>{})},500)});});call.on('close',endCall);call.on('error',e=>{console.log('Video call error:',e);endCall()})}).catch(e=>{showToast('无法访问摄像头: '+e.message);call.close()})}}
-function rejectCall(){stopRingtone();document.getElementById('incomingCall').classList.remove('active');if(window._incomingCall){window._incomingCall.call.close();const c=connections[window._incomingCall.remoteUserId];if(c&&c.open)c.send({type:'call-reject'});window._incomingCall=null}}
-function setupRemoteAudio(){let a=document.getElementById('remoteAudio');if(!a){a=document.createElement('audio');a.id='remoteAudio';a.autoplay=true;a.setAttribute('playsinline','');a.setAttribute('webkit-playsinline','');a.style.display='none';document.body.appendChild(a)}a.muted=false;a.volume=1.0}
-function attachRemoteStream(stream){let a=document.getElementById('remoteAudio');if(!a){setupRemoteAudio();a=document.getElementById('remoteAudio')}if(a){a.srcObject=stream;a.muted=false;a.volume=1.0;const tryPlay=()=>{if(a.paused||a.ended){const p=a.play();if(p&&p.catch)p.catch(e=>{console.log('Audio play error:',e)})}};tryPlay();setTimeout(tryPlay,500);setTimeout(tryPlay,1500);setTimeout(tryPlay,3000);document.body.addEventListener('click',function playOnClick(){tryPlay();document.body.removeEventListener('click',playOnClick)},{once:true});document.body.addEventListener('touchstart',function playOnTouch(){tryPlay();document.body.removeEventListener('touchstart',playOnTouch)},{once:true})}}
-function endVoiceCall(){if(voiceCallTimer){clearInterval(voiceCallTimer);voiceCallTimer=null}if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}const a=document.getElementById('remoteAudio');if(a){a.pause();a.srcObject=null;a.remove()}show('mainScreen');renderChats()}
-function toggleVoiceMute(){if(!localStream)return;localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('vMuteBtn').textContent=localStream.getAudioTracks()[0].enabled?'🎤':'🔇'}
-function toggleSpeaker(){isSpeakerOn=!isSpeakerOn;const a=document.getElementById('remoteAudio');if(a){try{if(isSpeakerOn){a.setSinkId&&a.setSinkId('').catch(()=>{});a.volume=1.0}else{a.volume=0.5}}catch(e){}}document.getElementById('vSpeakerBtn').textContent=isSpeakerOn?'🔊':'🔈'}
-async function startCall(){if(!curChat||curChatType!=='friend')return;if(!myPeer){showToast('P2P未连接');return}if(!connections[curChat.id]||!connections[curChat.id].open)connectToPeer(curChat.id);try{localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:true});document.getElementById('localVideo').srcObject=localStream;document.getElementById('localVideo').muted=true;document.getElementById('localVideo').play().catch(()=>{})}catch(e){showToast('请允许访问摄像头和麦克风');return}show('videoScreen');currentCallType='video';const call=myPeer.call('friendapp-user-'+curChat.id,localStream,{metadata:{type:'video',callerId:user.id}});currentMediaCall=call;call.on('stream',rs=>{console.log('Got remote video stream');document.getElementById('remoteVideo').srcObject=rs;document.getElementById('remoteVideo').play().catch(e=>{console.log('Remote video play failed:',e);document.getElementById('remoteVideo').muted=false;document.getElementById('remoteVideo').play().catch(()=>{})})});call.on('close',endCall);call.on('error',e=>{console.log('Video call error:',e);endCall()});const c=connections[curChat.id];if(c&&c.open)c.send({type:'call-offer',callerName:user.nickname||user.username,callerId:user.id,callType:'video'})}
-function endCall(){if(currentMediaCall){currentMediaCall.close();currentMediaCall=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}document.getElementById('localVideo').srcObject=null;document.getElementById('remoteVideo').srcObject=null;show('mainScreen');renderChats()}
-function toggleMute(){if(localStream){localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('muteBtn').textContent=localStream.getAudioTracks()[0].enabled?'🎤':'🔇'}}
-function toggleCam(){if(localStream){localStream.getVideoTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('camBtn').textContent=localStream.getVideoTracks()[0].enabled?'📷':'🚫'}}
+function startVideoCallFromProfile(fid){closeProfile();curChatType='friend';curChat=loadDB().users.find(u=>u.id===fid);if(curChat)startVideoCall()}
+
+function acceptCallUI(){
+  stopRingtone();document.getElementById('incomingCall').classList.remove('active');
+  const ic=window._incomingCall;if(!ic||!ic.call){showToast('通话已结束');return}
+  const call=ic.call;const callType=ic.callType;currentCallType=callType;currentMediaCall=call;
+  const db=loadDB();const ruid=parseInt(call.peer.replace('friendapp-user-',''));const ru=db.users.find(u=>u.id===ruid);const name=ru?getDisplayName(ru):'未知';
+  window._incomingCall=null;
+  if(callType==='video'){
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:true}).then(stream=>{
+      localStream=stream;
+      document.getElementById('localVideo').srcObject=stream;document.getElementById('localVideo').muted=true;document.getElementById('localVideo').play().catch(()=>{});
+      call.on('stream',rs=>{document.getElementById('remoteVideo').srcObject=rs;const tp=()=>{document.getElementById('remoteVideo').play().catch(()=>{})};tp();setTimeout(tp,500);setTimeout(tp,2000)});
+      call.on('close',()=>{if(currentMediaCall===call)endCall()});
+      call.on('error',()=>{if(currentMediaCall===call)endCall()});
+      call.answer(stream);
+      show('videoScreen');
+    }).catch(e=>{showToast('无法访问摄像头: '+e.message);call.close()});
+  }else{
+    navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{
+      localStream=stream;setupRemoteAudio();
+      call.on('stream',rs=>{attachRemoteStream(rs);document.getElementById('vcStatus').textContent='通话中'});
+      call.on('close',()=>{if(currentMediaCall===call)endVoiceCall()});
+      call.on('error',()=>{if(currentMediaCall===call)endVoiceCall()});
+      call.answer(stream);
+      document.getElementById('vcAvatar').textContent=name[0];document.getElementById('vcAvatar').className='voice-call-avatar '+avClass(ruid);
+      document.getElementById('vcName').textContent=name;document.getElementById('vcStatus').textContent='已接通';
+      document.getElementById('vcDuration').style.display='block';show('voiceCallScreen');
+      voiceCallStart=Date.now();voiceCallTimer=setInterval(()=>{const s=Math.floor((Date.now()-voiceCallStart)/1000);document.getElementById('vcDuration').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000);
+    }).catch(e=>{showToast('无法访问麦克风: '+e.message);call.close()});
+  }
+}
+function rejectCall(){stopRingtone();document.getElementById('incomingCall').classList.remove('active');if(window._incomingCall){try{window._incomingCall.call.close()}catch(e){}const c=connections[window._incomingCall.remoteUserId];if(c&&c.open)c.send({type:'call-reject'});window._incomingCall=null}}
+
+function setupRemoteAudio(){let a=document.getElementById('remoteAudio');if(!a){a=document.createElement('audio');a.id='remoteAudio';a.setAttribute('playsinline','');a.setAttribute('webkit-playsinline','');a.style.display='none';document.body.appendChild(a)}a.muted=false;a.volume=1.0}
+function attachRemoteStream(stream){
+  let a=document.getElementById('remoteAudio');if(!a){setupRemoteAudio();a=document.getElementById('remoteAudio')}
+  if(!a)return;a.srcObject=stream;a.muted=false;a.volume=1.0;
+  const tp=()=>{const p=a.play();if(p&&p.catch)p.catch(()=>{})};
+  tp();setTimeout(tp,300);setTimeout(tp,1000);setTimeout(tp,3000);
+  const unlock=()=>{tp();document.body.removeEventListener('click',unlock);document.body.removeEventListener('touchstart',unlock2)};
+  const unlock2=()=>{tp();document.body.removeEventListener('click',unlock);document.body.removeEventListener('touchstart',unlock2)};
+  document.body.addEventListener('click',unlock,{once:true});document.body.addEventListener('touchstart',unlock2,{once:true});
+}
+function endVoiceCall(){
+  if(voiceCallTimer){clearInterval(voiceCallTimer);voiceCallTimer=null}
+  if(currentMediaCall){try{currentMediaCall.close()}catch(e){};currentMediaCall=null}
+  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
+  const a=document.getElementById('remoteAudio');if(a){try{a.pause();a.srcObject=null}catch(e){}}
+  voiceCallStart=0;show('mainScreen');renderChats();
+}
+function toggleVoiceMute(){if(!localStream)return;localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('vMuteBtn').textContent=localStream.getAudioTracks()[0]?.enabled?'🎤':'🔇'}
+function toggleSpeaker(){isSpeakerOn=!isSpeakerOn;const a=document.getElementById('remoteAudio');if(a){a.volume=isSpeakerOn?1.0:0.5}document.getElementById('vSpeakerBtn').textContent=isSpeakerOn?'🔊':'🔈'}
+
+async function startVideoCall(){
+  if(!curChat||curChatType!=='friend')return;
+  if(!myPeer||!myPeer.open){showToast('网络未连接，请稍后重试');return}
+  try{localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:true});document.getElementById('localVideo').srcObject=localStream;document.getElementById('localVideo').muted=true;document.getElementById('localVideo').play().catch(()=>{})}catch(e){showToast('请允许访问摄像头和麦克风');return}
+  show('videoScreen');currentCallType='video';
+  const call=myPeer.call('friendapp-user-'+curChat.id,localStream,{metadata:{type:'video',callerId:user.id}});
+  if(!call){showToast('呼叫失败');endCall();return}
+  currentMediaCall=call;
+  call.on('stream',rs=>{document.getElementById('remoteVideo').srcObject=rs;const tp=()=>{document.getElementById('remoteVideo').play().catch(()=>{})};tp();setTimeout(tp,500);setTimeout(tp,2000)});
+  call.on('close',()=>{if(currentMediaCall===call)endCall()});
+  call.on('error',()=>{if(currentMediaCall===call)endCall()});
+  const c=connections[curChat.id];if(c&&c.open)c.send({type:'call-offer',callerName:user.nickname||user.username,callerId:user.id,callType:'video'});
+}
+function endCall(){if(currentMediaCall){try{currentMediaCall.close()}catch(e){};currentMediaCall=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}document.getElementById('localVideo').srcObject=null;document.getElementById('remoteVideo').srcObject=null;show('mainScreen');renderChats()}
+function toggleMute(){if(localStream){localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('muteBtn').textContent=localStream.getAudioTracks()[0]?.enabled?'🎤':'🔇'}}
+function toggleCam(){if(localStream){localStream.getVideoTracks().forEach(t=>t.enabled=!t.enabled);document.getElementById('camBtn').textContent=localStream.getVideoTracks()[0]?.enabled?'📷':'🚫'}}
 
 function mergeDB(r){if(!r)return;const l=loadDB();r.users.forEach(u=>{if(!l.users.find(x=>x.id===u.id))l.users.push(u)});r.friendships.forEach(f=>{if(!l.friendships.find(x=>x.id===f.id))l.friendships.push(f)});r.messages.forEach(m=>{if(!l.messages.find(x=>x.id===m.id))l.messages.push(m)});if(r.groups)r.groups.forEach(g=>{if(!l.groups.find(x=>x.id===g.id))l.groups.push(g)});l.nextId=Math.max(l.nextId,r.nextId||1);saveDB(l)}
 // ===== 摇一摇 =====
@@ -891,7 +970,7 @@ handleDataConnection=function(conn){
       case 'search-request':handleSearchRequest(conn,data);break;
       case 'search-response':handleSearchResponse(data);break;
       case 'call-reject':showToast('对方拒绝了通话');break;
-      case 'call-offer':{if(!document.getElementById('incomingCall').classList.contains('active')){document.getElementById('callerName').textContent=data.callerName||'未知';const ct2=data.callType||'video';document.getElementById('callTypeLabel').textContent=ct2==='video'?'📹 视频通话邀请':'📞 语音通话邀请';document.getElementById('callerAv').textContent=(data.callerName||'?')[0];document.getElementById('incomingCall').classList.add('active');playRingtone()}break}
+      case 'call-offer':{if(!document.getElementById('incomingCall').classList.contains('active')){const ct2=data.callType||'voice';showIncomingCall(data.callerName||'未知',null,ct2)}break}
       case 'typing':if(curChat&&curChat.id===data.fromId&&curChatType==='friend'){document.getElementById('typingIndicator').textContent='对方正在输入...';clearTimeout(window._tt);window._tt=setTimeout(()=>{document.getElementById('typingIndicator').textContent=''},3000)}break;
       case 'msg-recall':{const d4=loadDB();const m=d4.messages.find(x=>x.id===data.msgId);if(m){m.recalled=true;m.content='';m.type='recall';saveDB(d4);if(curChat)loadMessages()}break}
       case 'group-msg':receiveGroupMsg(data);break;
