@@ -8,9 +8,11 @@
     "createdAt": "2026-05-08T05:47:23.729Z"
   },
   {
-    "fromUsername": "Xiez",
-    "fromNickname": "002",
+    "fromUserId": 18,
+    "fromUsername": "Xiefei",
+    "fromNickname": "001",
+    "toUserId": 1,
     "toUsername": "alice",
-    "createdAt": "2026-05-08T05:56:22.568Z"
+    "createdAt": "2026-05-08T05:58:54.444Z"
   }
 ]
