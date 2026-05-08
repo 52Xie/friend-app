@@ -7,47 +7,39 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:#f5f5f5;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-.hero{background:linear-gradient(135deg,#07c160,#06ad56);color:#fff;width:100%;padding:60px 24px 40px;text-align:center;border-radius:0 0 40px 40px}
-.hero .app-icon{width:80px;height:80px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:#07c160;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,.15)}
-.hero h1{font-size:28px;font-weight:700;margin-bottom:6px}
-.hero p{font-size:15px;opacity:.9}
-.container{width:100%;max-width:440px;padding:24px;flex:1}
-.section{background:#fff;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.section h2{font-size:18px;color:#1e293b;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.section h2 .icon{font-size:22px}
-.step{display:flex;gap:14px;margin-bottom:18px}
+.hero{background:linear-gradient(135deg,#07c160,#06ad56);color:#fff;width:100%;padding:50px 24px 36px;text-align:center;border-radius:0 0 36px 36px}
+.hero .app-icon{width:80px;height:80px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:#07c160;margin:0 auto 14px;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.hero h1{font-size:26px;font-weight:700;margin-bottom:4px}
+.hero p{font-size:14px;opacity:.9}
+.container{width:100%;max-width:440px;padding:20px;flex:1}
+.section{background:#fff;border-radius:16px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.section h2{font-size:17px;color:#1e293b;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section h2 .icon{font-size:20px}
+.step{display:flex;gap:12px;margin-bottom:14px}
 .step:last-child{margin-bottom:0}
-.step-num{width:28px;height:28px;border-radius:50%;background:#07c160;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.step-num{width:26px;height:26px;border-radius:50%;background:#07c160;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .step-text{flex:1}
-.step-text .title{font-size:15px;font-weight:600;color:#1e293b;margin-bottom:2px}
-.step-text .desc{font-size:13px;color:#666;line-height:1.5}
-.install-btn{display:block;width:100%;padding:14px;background:#07c160;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;margin-top:8px}
-.install-btn:active{background:#06ad56}
-.install-btn.ios{background:#007aff}
-.install-btn.ios:active{background:#0066d6}
-.badge-row{display:flex;gap:12px;margin-top:16px;justify-content:center}
-.badge-item{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:6px 14px;font-size:12px;color:#666;display:flex;align-items:center;gap:6px}
-.badge-item .dot{width:8px;height:8px;border-radius:50%}
-.badge-item .dot.green{background:#07c160}
-.badge-item .dot.blue{background:#007aff}
-.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.feature-item{background:#f8faf8;border-radius:10px;padding:14px;text-align:center}
-.feature-item .f-icon{font-size:28px;margin-bottom:4px}
-.feature-item .f-name{font-size:13px;color:#1e293b;font-weight:500}
-.qr-section{text-align:center;padding:20px}
-.qr-section p{font-size:13px;color:#999;margin-top:8px}
-.or-divider{text-align:center;color:#999;font-size:13px;margin:16px 0;position:relative}
-.or-divider::before,.or-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:#e5e5e5}
-.or-divider::before{left:0}.or-divider::after{right:0}
-footer{text-align:center;padding:20px;color:#999;font-size:12px}
-.screenshot{width:100%;border-radius:12px;margin-top:12px;background:#f0f0f0;overflow:hidden}
-.screenshot .mock{background:linear-gradient(135deg,#ededed,#f5f5f5);height:320px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-.mock-header{background:#ededed;padding:8px 16px;border-radius:8px 8px 0 0;width:100%;text-align:center;font-size:13px;color:#1e293b;font-weight:600}
-.mock-body{background:#ededed;flex:1;width:100%;padding:12px;display:flex;flex-direction:column;gap:8px}
-.mock-msg{padding:8px 12px;border-radius:8px;font-size:13px;max-width:70%}
-.mock-msg.me{background:#95ec69;color:#1e293b;align-self:flex-end}
-.mock-msg.them{background:#fff;color:#1e293b;align-self:flex-start}
-.mock-input{background:#fff;padding:8px 12px;border-radius:8px;font-size:13px;color:#999;margin-top:auto}
+.step-text .title{font-size:14px;font-weight:600;color:#1e293b;margin-bottom:2px}
+.step-text .desc{font-size:12px;color:#666;line-height:1.5}
+.download-btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;margin-top:8px;color:#fff}
+.download-btn:active{opacity:.8}
+.btn-android{background:linear-gradient(135deg,#3DDC84,#2BAF6A)}
+.btn-ios{background:linear-gradient(135deg,#007AFF,#0055D4)}
+.btn-pwa{background:linear-gradient(135deg,#576b95,#3b5998)}
+.platform-tabs{display:flex;gap:8px;margin-bottom:16px}
+.platform-tab{flex:1;padding:10px;border:2px solid #e5e5e5;border-radius:10px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;background:#fff;transition:all .2s}
+.platform-tab.active{border-color:#07c160;background:#f0fdf4;color:#07c160}
+.platform-tab .pt-icon{font-size:22px;display:block;margin-bottom:4px}
+.platform-content{display:none}
+.platform-content.active{display:block}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.feature-item{background:#f8faf8;border-radius:10px;padding:12px;text-align:center}
+.feature-item .f-icon{font-size:26px;margin-bottom:2px}
+.feature-item .f-name{font-size:12px;color:#1e293b;font-weight:500}
+.qr-section{text-align:center;padding:16px}
+.qr-section p{font-size:12px;color:#999;margin-top:8px}
+footer{text-align:center;padding:16px;color:#999;font-size:11px}
+.notice{background:#fffbeb;border:1px solid #fef3c7;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:#92400e;line-height:1.6}
 </style>
 </head>
 <body>
@@ -60,83 +52,84 @@ footer{text-align:center;padding:20px;color:#999;font-size:12px}
 
 <div class="container">
 
+  <!-- 下载方式选择 -->
   <div class="section">
-    <h2><span class="icon">📱</span>安装到手机桌面</h2>
+    <h2><span class="icon">📱</span>选择安装方式</h2>
+    <div class="platform-tabs">
+      <div class="platform-tab active" onclick="switchPlatform('android')" id="tab-android">
+        <span class="pt-icon">🤖</span>安卓手机
+      </div>
+      <div class="platform-tab" onclick="switchPlatform('ios')" id="tab-ios">
+        <span class="pt-icon">🍎</span>苹果手机
+      </div>
+    </div>
 
-    <!-- iOS 指引 -->
-    <div id="iosGuide">
-      <div class="step">
+    <!-- 安卓下载 -->
+    <div class="platform-content active" id="content-android">
+      <a href="https://github.com/52Xie/friend-app/releases/download/v5.0/FriendApp.apk" class="download-btn btn-android" id="apkDownload">
+        ⬇️ 下载安卓安装包 (APK)
+      </a>
+      <div class="notice">
+        <strong>安装步骤：</strong><br>
+        1. 点击上方按钮下载 APK 文件<br>
+        2. 打开下载的文件，如提示「未知来源」请在设置中允许<br>
+        3. 点击「安装」等待完成<br>
+        4. 安装后打开即可使用
+      </div>
+
+      <p style="text-align:center;color:#999;font-size:12px;margin:14px 0">—— 或者 ——</p>
+
+      <a href="./index.html" class="download-btn btn-pwa">
+        🌐 用浏览器直接打开 (PWA)
+      </a>
+      <p style="text-align:center;color:#999;font-size:11px;margin-top:6px">Chrome 浏览器可一键安装到桌面</p>
+    </div>
+
+    <!-- iOS 下载 -->
+    <div class="platform-content" id="content-ios">
+      <a href="./index.html" class="download-btn btn-ios">
+        🌐 用 Safari 打开应用
+      </a>
+      <div class="step" style="margin-top:14px">
         <div class="step-num">1</div>
         <div class="step-text">
-          <div class="title">用 Safari 打开此页面</div>
-          <div class="desc">必须使用 Safari 浏览器打开（其他浏览器无法添加到主屏幕）</div>
+          <div class="title">用 Safari 打开上方链接</div>
+          <div class="desc">必须使用 Safari 浏览器（其他浏览器无法安装）</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-text">
-          <div class="title">点击底部「分享」按钮</div>
-          <div class="desc">找到 <strong>↑</strong> 分享图标，通常在底部工具栏中间</div>
+          <div class="title">点击底部 <strong>↑ 分享</strong> 按钮</div>
+          <div class="desc">在底部工具栏找到分享图标</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-text">
           <div class="title">选择「添加到主屏幕」</div>
-          <div class="desc">在弹出的菜单中找到并点击「添加到主屏幕」</div>
+          <div class="desc">在菜单中找到并点击</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-text">
           <div class="title">点击「添加」完成安装</div>
-          <div class="desc">回到桌面即可看到 Friend App 图标，点击即可使用</div>
+          <div class="desc">桌面会出现 Friend App 图标，点击即可使用</div>
         </div>
       </div>
-      <a href="./index.html" class="install-btn ios">打开 Friend App（iOS）</a>
-    </div>
-
-    <!-- Android 指引 -->
-    <div id="androidGuide" style="display:none">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">
-          <div class="title">用 Chrome 打开此页面</div>
-          <div class="desc">使用 Chrome 浏览器访问此链接</div>
-        </div>
+      <div class="notice">
+        <strong>注意：</strong>iOS 不支持 APK 安装包，只能通过 Safari 的「添加到主屏幕」方式安装。安装后效果和原生 App 一样！
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">
-          <div class="title">点击「添加到主屏幕」</div>
-          <div class="desc">浏览器会自动弹出安装提示，或点击菜单→「安装应用」</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">
-          <div class="title">确认安装</div>
-          <div class="desc">点击「安装」，应用图标将出现在桌面</div>
-        </div>
-      </div>
-      <button class="install-btn" id="installBtn" onclick="installApp()">一键安装 Friend App（Android）</button>
-    </div>
-
-    <div class="or-divider">或</div>
-
-    <div class="qr-section">
-      <div style="background:#fff;padding:16px;border-radius:12px;display:inline-block;border:1px solid #e5e5e5">
-        <canvas id="qrCanvas" width="160" height="160"></canvas>
-      </div>
-      <p>扫码在手机上打开此页面</p>
     </div>
   </div>
 
+  <!-- 功能特色 -->
   <div class="section">
     <h2><span class="icon">✨</span>功能特色</h2>
     <div class="features">
       <div class="feature-item"><div class="f-icon">💬</div><div class="f-name">实时聊天</div></div>
-      <div class="feature-item"><div class="f-icon">🎤</div><div class="f-name">语音通话</div></div>
+      <div class="feature-item"><div class="f-icon">📞</div><div class="f-name">语音通话</div></div>
       <div class="feature-item"><div class="f-icon">📹</div><div class="f-name">视频通话</div></div>
       <div class="feature-item"><div class="f-icon">📷</div><div class="f-name">图片发送</div></div>
       <div class="feature-item"><div class="f-icon">👋</div><div class="f-name">摇一摇</div></div>
@@ -146,43 +139,32 @@ footer{text-align:center;padding:20px;color:#999;font-size:12px}
     </div>
   </div>
 
-  <div class="section">
-    <h2><span class="icon">🖼️</span>应用预览</h2>
-    <div class="screenshot">
-      <div class="mock">
-        <div class="mock-header">Friend App</div>
-        <div class="mock-body">
-          <div class="mock-msg them">你好！👋</div>
-          <div class="mock-msg me">嗨，在吗？</div>
-          <div class="mock-msg them">🎤 语音消息 3"</div>
-          <div class="mock-msg me">📷 图片</div>
-          <div class="mock-msg them">🧧 恭喜发财</div>
-          <div class="mock-input">输入消息...</div>
-        </div>
-      </div>
+  <!-- 二维码 -->
+  <div class="section qr-section">
+    <div style="background:#fff;padding:14px;border-radius:12px;display:inline-block;border:1px solid #e5e5e5">
+      <canvas id="qrCanvas" width="160" height="160"></canvas>
     </div>
-  </div>
-
-  <div class="badge-row">
-    <div class="badge-item"><span class="dot green"></span>P2P端到端加密</div>
-    <div class="badge-item"><span class="dot blue"></span>无需App Store</div>
+    <p>扫描二维码在手机上打开此页面</p>
   </div>
 
 </div>
 
-<footer>Friend App v4.0 · P2P 实时通信 · 无需下载App Store</footer>
+<footer>Friend App v5.0 · P2P 实时通信 · 安卓 + iOS</footer>
 
 <script>
-// 检测设备类型
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const isAndroid = /Android/.test(navigator.userAgent);
+function switchPlatform(platform) {
+  document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.platform-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + platform).classList.add('active');
+  document.getElementById('content-' + platform).classList.add('active');
+}
 
-if (isIOS) {
-  document.getElementById('iosGuide').style.display = 'block';
-  document.getElementById('androidGuide').style.display = 'none';
-} else if (isAndroid) {
-  document.getElementById('iosGuide').style.display = 'none';
-  document.getElementById('androidGuide').style.display = 'block';
+// 自动检测平台
+const ua = navigator.userAgent;
+if (/iPad|iPhone|iPod/.test(ua)) {
+  switchPlatform('ios');
+} else if (/Android/.test(ua)) {
+  switchPlatform('android');
 }
 
 // Android PWA 安装
@@ -191,18 +173,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
 });
-
-function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      deferredPrompt = null;
-    });
-  } else {
-    // 没有安装提示，直接打开应用
-    window.location.href = './index.html';
-  }
-}
 
 // 生成二维码
 const canvas = document.getElementById('qrCanvas');
