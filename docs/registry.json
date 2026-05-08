@@ -1,27 +1,4 @@
 [
-  {
-    "id": 1,
-    "username": "alice",
-    "nickname": "ç±ä¸½ä¸"
-  },
-  {
-    "id": 2,
-    "username": "bob",
-    "nickname": "é²å"
-  },
-  {
-    "id": 3,
-    "username": "charlie",
-    "nickname": "æ¥ç"
-  },
-  {
-    "id": 13,
-    "username": "002",
-    "nickname": "001"
-  },
-  {
-    "id": 10,
-    "username": "xiexie",
-    "nickname": "飛"
-  }
+  {"id":13,"username":"002","nickname":"001"},
+  {"id":10,"username":"xiexie","nickname":"飛"}
 ]
