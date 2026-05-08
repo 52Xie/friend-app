@@ -264,7 +264,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <body>
 <div id="toast" class="toast"></div>
 
-<div id="loginScreen" class="screen auth-screen active">
+<div id="loginScreen" class="screen auth-screen">
 <div class="auth-box">
 <h1>Friend App</h1><p class="sub">好友实时互动</p>
 <div id="loginError" class="error"></div>
@@ -993,7 +993,9 @@ handleDataConnection=function(conn){
 // ===== Service Worker =====
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW注册失败',e))}
 
-const savedUser=localStorage.getItem('friendAppUser');if(savedUser){try{user=JSON.parse(savedUser);enterApp()}catch{}}
+// ===== 自动登录：只要不主动退出，后台自动登录 =====
+const savedUser=localStorage.getItem('friendAppUser');
+if(savedUser){try{const su=JSON.parse(savedUser);const db=loadDB();const exists=db.users.find(u=>u.id===su.id&&u.username===su.username);if(exists){user=su;enterApp()}else{localStorage.removeItem('friendAppUser');show('loginScreen')}}catch{localStorage.removeItem('friendAppUser');show('loginScreen')}}else{show('loginScreen')}
 </script>
 </body>
 </html>
