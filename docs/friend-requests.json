@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "fromUserId": 18,
+    "fromUsername": "Xiefei",
+    "fromNickname": "001",
+    "toUserId": 17,
+    "toUsername": "Xiez",
+    "createdAt": "2026-05-08T05:47:23.729Z"
+  }
+]
