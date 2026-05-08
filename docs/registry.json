@@ -2,21 +2,26 @@
   {
     "id": 1,
     "username": "alice",
-    "nickname": "爱丽丝"
+    "nickname": "ç±ä¸½ä¸"
   },
   {
     "id": 2,
     "username": "bob",
-    "nickname": "鲍勃"
+    "nickname": "é²å"
   },
   {
     "id": 3,
     "username": "charlie",
-    "nickname": "查理"
+    "nickname": "æ¥ç"
   },
   {
     "id": 13,
     "username": "002",
     "nickname": "001"
+  },
+  {
+    "id": 99,
+    "username": "test99",
+    "nickname": "æµè¯99"
   }
 ]
